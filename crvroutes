@@ -1,0 +1,252 @@
+package nz.co.farmiq.server.route;
+
+public class CRVRouteConstants {
+    public static final String ALL_GROUPS_ANIMAL_TYPES =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/animals/groups/farm/{farmId}/{animalTypeId}";
+    public static final String ALL_DYNAMIC_GROUPS_ANIMAL_TYPES =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/animals/dynamicgroups/farm/{farmId}/{animalTypeId}";
+    public static final String POSSIBLE_MATING_END = "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+        + "/animals/mating/started/{farmId}/{animalTypeId}/{date}";
+    public static final String RECORD_MATING_END = "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+        + "/animals/mating/end/{farmId}/{animalEventId}/{date}";
+
+    public static final String GET_RECENT_MATING_AND_HEAT_DATES =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/animals/farm/{farmId}/{animalId}/matingdates/before/{matingDate}";
+    public static final String GET_RECENT_HEAT_DATES_FOR_FARM =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/animals/farm/{farmId}/heatdates/before/{matingDateStart}";
+    public static final String SEARCH_BULL =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/animals/search/bull/{farmId}/{term}";
+    public static final String BOBBIES_FOR_SEASON =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/animals/bobbie/season/{farmId}";
+    public static final String GET_BULL_TEAM =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/animals/get/bullteam/{farmId}";
+    public static final String GET_BULL_TEAM2 =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/animals/get/bullteam2/{farmId}";
+    public static final String UPDATE_BULL_TEAM =
+        "rest:post:" + CRVRouteConstantPrefix.WEB_PREFIX + "/animals/update/bullteam/{farmId}";
+    public static final String SIRE_MATCH = "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+        + "/animals/get/sirematch/{farmId}/{animalId}";
+    public static final String SIRE_MATCH_FOR_FARM =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/animals/get/sirematchs/{farmId}";
+    public static final String SIRE_MATCH_RECORD_FOR_FARM =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/animals/get/sirematchrecords/{farmId}";
+    public static final String SIRE_PROTECT_RECORD_FOR_FARM =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/animals/get/sireprotectrecords/{farmId}";
+    public static final String GET_CRV_ANIMAL =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/animals/get/animal/{farmId}/{animalId}";
+    public static final String GET_CRV_ANIMAL_PREG_STATUS =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/animals/pregnancy/status/{farmId}/{animalId}";
+
+    public static final String BULL_TEAM_DETAILS =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/animals/get/bullteam/{farmId}/details";
+    public static final String ANIMAL_MATING_ANIMALS =
+        "rest:get:/animals/farm/{farmId}/mating/{matingEventId}/details";
+    public static final String ANIMAL_HEAT_ANIMALS =
+        "rest:get:/animals/farm/{farmId}/heat/{heatEventId}/details";
+    public static final String ANIMAL_TRAIT_ANIMALS =
+        "rest:get:/animals/farm/{farmId}/trait/{eventId}/details";
+    public static final String ANIMAL_PURCHASE_ANIMALS =
+        "rest:get:/animals/farm/{farmId}/purchase/{purchaseEventId}/details";
+    public static final String ANIMAL_SETUP_ANIMALS =
+        "rest:get:/animals/farm/{farmId}/setup/{eventId}/details";
+    public static final String ANIMAL_SCANNING_RECENT_MATINGS =
+        "rest:get:/animals/farm/{farmId}/pregnancyDiagnosis/{pregnancyDiagnosisId}/matingdates";
+    public static final String ANIMAL_MATING_FOR_PERIOD =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/animals/farm/{farmId}/matings/details/{start}/{end}";
+    public static final String BULL_DETAILS = "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+        + "/animals/get/bullteam/{farmId}/{bullId}/{onfarm}/details";
+    public static final String MATINGS_FOR_SEASON = "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+        + "/animals/matings/season/{farmId}/{start}/{end}";
+    public static final String BIRTHS_FOR_SEASON = "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+        + "/animals/births/season/{farmId}/{start}/{end}";
+
+    public static final String BIRTHS_FOR_SEASON_SIMPLE =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/animals/births/simple/season/{farmId}/{start}/{end}";
+
+    public static final String BIRTHED_FOR_SEASON_SIMPLE =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/animals/birthed/simple/season/{farmId}/{start}/{end}";
+
+    public static final String ANIMAL_MATINGS_FOR_SEASON =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/animals/matings/individual/season/{farmId}/{start}/{end}/{insistMated}";
+    public static final String ANIMAL_MATINGS_FOR_SEASON_SIMPLE =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/animals/matings/individual/simple/season/{farmId}/{start}/{end}";
+    public static final String ANIMAL_AGE_GROUPINGS =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/animals/age/groupings/{organisationId}";
+    public static final String ANIMAL_AGE_GROUPINGS_COMPRESSED =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/animals/age/groupings/{organisationId}/{lastRefresh}/{compressed}";
+    public static final String DIGAD_ANIMAL_CODES =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/animals/digad/codes";
+    public static final String GET_REPORTS_DEFAULTS =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/report/defaults/{farmId}/{name}/get";
+    public static final String DELETE_REPORTS_DEFAULTS =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/report/defaults/{farmId}/{id}/delete";
+    public static final String SAVE_REPORTS_DEFAULTS =
+        "rest:post:" + CRVRouteConstantPrefix.WEB_PREFIX + "/report/defaults/{farmId}";
+    public static final String INSIGHT_LOGIN_POST =
+        "rest:post:/signup/crv/insight/login";
+    public static final String INSIGHT_LOGIN_GET =
+        "rest:get:/signup/crv/insight/login";
+
+    public static final String APPROVE_FARM = "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+        + "/manage/farm/{companyId}/{farmId}/approve";
+    public static final String APPROVE_AND_MIGRATE_FARM =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/manage/farm/{companyId}/{farmId}/approvemigrate";
+    public static final String REJECT_FARM = "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+        + "/manage/farm/{companyId}/{farmId}/reject";
+    public static final String SUBMIT_PORTABLE_MATING =
+        "rest:post:/webservices/external" + CRVRouteConstantPrefix.WEB_PREFIX + "/mating/submit";
+    public static final String SUBMIT_TAG_FILE =
+        "rest:post:/webservices/external" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/tagcupboard/submit";
+    public static final String SUBMIT_HERD_TEST =
+        "rest:post:/webservices/external" + CRVRouteConstantPrefix.WEB_PREFIX + "/herdtest/submit";
+
+    public static final String LIST_HERD_TESTS_ID =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/herdtests/list/{farmId}/{id}";
+    public static final String HERD_TEST_RESULTS =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/herdtests/results/list/{farmId}/{id}";
+    public static final String HERD_TEST_RESULTS_QUERIES =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/herdtests/results/list/queries/{farmId}/{id}";
+    public static final String LIST_HERD_TESTS_ALL =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/herdtests/list/{farmId}";
+    public static final String LIST_HERD_TESTS_DATE =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/herdtests/list/{farmId}/{start}/{end}";
+
+    public static final String SUMMARY_HERD_TESTS_ID =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/herdtests/summary/all/{farmId}/{id}";
+    public static final String SUMMARY_HERD_TESTS_DATE =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/herdtests/summary/all/{farmId}/{start}/{end}";
+
+    public static final String BREED_SUMMARY_HERD_TESTS_ID =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/herdtests/summary/breed/{farmId}/{id}";
+    public static final String BREED_SUMMARY_HERD_TESTS_DATE =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/herdtests/summary/breed/{farmId}/{start}/{end}";
+
+    public static final String AGEGROUP_SUMMARY_HERD_TESTS_ID =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/herdtests/summary/agegroup/{farmId}/{id}";
+    public static final String AGEGROUP_SUMMARY_HERD_TESTS_DATE =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/herdtests/summary/agegroup/{farmId}/{start}/{end}";
+    public static final String CALVINGGROUP_SUMMARY_HERD_TESTS_DATE =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/herdtests/summary/calvinggroup/{farmId}/{start}/{end}";
+
+    public static final String SAVE_ANIMAL_GROUP =
+        "rest:post:" + CRVRouteConstantPrefix.WEB_PREFIX + "/save/group/{farmId}";
+    public static final String DELETE_ANIMAL_GROUP =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/delete/group/{farmId}/{groupId}";
+    public static final String ANIMAL_PREGNANT_FOR_SEASON =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/animals/pregnant/individual/season/{farmId}/{start}/{end}";
+
+    public static final String ANIMAL_PREGNANT_FOR_SEASON_INCLUDE_SCORES =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/animals/pregnant/individual/season/includescores/{farmId}/{start}/{end}";
+
+    public static final String EXPECTED_DRYOFFS_FOR_SEASON =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/animals/expected/dryoffs/season/{farmId}/{start}/{end}";
+
+    public static final String TREATMENTS_APPLIED_FOR_SEASON =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/animals/applied/treatments/season/{farmId}/{start}/{end}/{includeReturnVAT}";
+
+    public static final String ISSUES_RECORDED_FOR_SEASON =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/animals/applied/issues/season/{farmId}/{start}/{end}";
+
+    public static final String ANIMAL_PREGNANT_RESULT_FOR_SEASON =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/animals/pregnant/result/season/{farmId}/{start}/{end}";
+    public static final String ANIMAL_CALVED_FOR_SEASON =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/animals/calved/individual/season/{farmId}/{start}/{end}";
+    public static final String SET_MAX_VID =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/farm/maxvid/{farmId}/{maxVID}";
+    public static final String UPLOAD_TAGS =
+        "rest:post:" + CRVRouteConstantPrefix.WEB_PREFIX + "/upload/tags/{farmId}";
+    public static final String GET_ANIMAL_WEIGHTS = "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+        + "/animals/get/animal/weights/{farmId}/{animalId}";
+    public static final String GET_ANIMAL_CONDITIONS =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/animals/get/animal/conditions/{farmId}/{animalId}";
+    public static final String GET_UNASSIGNED_TAG_BY_FARM =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/unassigned/tag/{farmId}";
+    public static final String GET_UNASSIGNED_TAG_BY_FARM_2 =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/unassigned/tag/{farmId}/{lastRefresh}/{theId}";
+
+    public static final String RECORD_ABNORMAL_CODE =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/herdtest/record/abnormalcode/{queryId}/{farmId}/{code}";
+
+    public static final String HERD_TEST_REPROCESS = "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+        + "/herdtest/reprocess/{farmId}/{herdtestId}";
+
+    public static final String HERD_TEST_CLEAR_QUERY =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/herdtest/clearquery/{farmId}/{queryId}";
+
+    public static final String MATING_REPROCESS =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/mating/reprocess/{farmId}/{eventId}";
+
+    public static final String GET_CUSTOM_REPORTS =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/custom/reports/farm/{farmId}";
+    public static final String GET_CUSTOM_REPORTS_TEMPLATES =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/custom/reports/template/{farmId}";
+    public static final String SAVE_CUSTOM_REPORT =
+        "rest:post:" + CRVRouteConstantPrefix.WEB_PREFIX + "/custom/report/save/{farmId}";
+    public static final String FIND_ANIMAL_IDS =
+        "rest:post:" + CRVRouteConstantPrefix.WEB_PREFIX + "/find/animal/ids/{farmId}";
+    public static final String NAME_ANIMAL =
+        "rest:post:" + CRVRouteConstantPrefix.WEB_PREFIX + "/name/animal/{farmId}";
+    public static final String LAST_TREATMENT = "rest:post:" + CRVRouteConstantPrefix.WEB_PREFIX
+        + "/animals/applied/treatments/last/{farmId}";
+
+    public static final String WEIGHT_EVENTS =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/list/weight/events/{farmId}";
+    public static final String CS_EVENTS =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/list/cs/events/{farmId}";
+
+    public static final String WEIGHT_EVENT_ACTIVITIES =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/list/weight/events/{farmId}/{eventId}";
+    public static final String CS_EVENT_ACTIVITIES =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/list/cs/events/{farmId}/{eventId}";
+
+    public static final String WEIGHT_EVENT_ACTIVITIES_BY_DATE =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/list/weight/events/date/{farmId}/{eventDate}";
+    public static final String CS_EVENT_ACTIVITIES_BY_DATE =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/list/cs/events/date/{farmId}/{eventDate}";
+
+    public static final String FIND_LACTATIONS =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX + "/find/lactations/{farmId}/{animalId}";
+    public static final String SEASON_PERFORMANCE_CRV =
+        "rest:get:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/dashboard/dairy/seasonperformance/{farmId}";
+
+    public static final String FIND_LACTATIONS_DATE = "rest:post:"
+        + CRVRouteConstantPrefix.WEB_PREFIX + "/find/animal/lactations/animals/{farmId}/{date}";
+    public static final String FIND_LACTATIONS_DATE_RANGE =
+        "rest:post:" + CRVRouteConstantPrefix.WEB_PREFIX
+            + "/find/animal/lactations/animals/{farmId}/{fromDate}/{toDate}";
+}

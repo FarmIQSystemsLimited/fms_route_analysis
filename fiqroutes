@@ -1,0 +1,3114 @@
+/*
+ The copyright to the computer program(s) herein is the property
+of FarmIQ, New Zealand, e-Spatial and/or other parties (as
+applicable). This program(s) may be used and/or copied only with
+the written permission from FarmIQ or in accordance with the
+terms and conditions stipulated in the agreement/contract under
+which the program(s) have been supplied.
+ */
+package nz.co.farmiq.server.route;
+
+import com.salesforce.workflow.newfarm.NotificationPort;
+import nz.co.farmiq.finance.FinancePort;
+import nz.co.farmiq.finance.san.SANPort;
+import nz.co.farmiq.partner.Farmiq;
+import nz.co.farmiq.schemas.callaghanpasture.PasturePort;
+import nz.co.farmiq.server.entity.nait.TransactionType;
+import nz.co.farmiq.server.remote.meatprocessor.MeatProcessorWebServices;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class RouteConstants {
+
+    private RouteConstants() {
+
+    }
+
+    // internal rest services - chained transactions
+    public static final String CHAINED_TXN_SUBMIT =
+        "rest:post:/animal/chained/submit/{JMSXGroupID}";
+    public static final String CHAINED_TXN_PROCESSING = "direct:animal/chained/processing";
+    public static final String NAIT_TXN_SUBMIT =
+        "rest:get:/animal/nait/resubmit/{farmId}/{animalEventId}";
+
+    public static final String QUEUE_CHAINED_TXN = "farmiq_txn_chained_direct";
+    public static final String QUEUE_CHAINED_TXN_DIRECT = "direct:" + QUEUE_CHAINED_TXN;
+
+    // internal rest services - tags management
+    public static final String ELECTRONIC_TAG_FILES_LIST =
+        "rest:get:/electronictags/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String ELECTRONIC_TAG_FILES_SUBMIT =
+        "rest:post:/electronictags/submit";
+    public static final String ELECTRONIC_TAG_FILES_VALIDATE =
+        "rest:post:/electronictags/validatetags";
+    public static final String ELECTRONIC_TAG_SEARCH =
+        "rest:get:/electronictags/search/{farmId}/{tagNumber}";
+    public static final String ELECTRONIC_TAG_SEARCH_GLOBAL =
+        "rest:get:/electronictags/searchglobal/{tagNumber}";
+    public static final String ELECTRONIC_TAG_PARTIALSEARCH =
+        "rest:get:/electronictags/partialsearch/{farmId}/{tagNumber}";
+    // internal rest services - animal management
+    public static final String ANIMAL_ACTIVITY_VALIDATE =
+        "rest:post:/animalevents/validate";
+    public static final String ANIMAL_CLEANUP_TAGS =
+        "rest:post:/animalevents/cleanuptags";
+    public static final String ANIMAL_INTERNAL_MOVE_VALIDATE =
+        "rest:post:/animalinternalmove/validate";
+    public static final String ANIMAL_ACTIVITY_GET =
+        "rest:get:/animalevents/get/{" + MessageConstants.FARM_ID_KEY
+            + "}/{" + MessageConstants.ANIMAL_EVENT_ID + "}";
+    public static final String ANIMAL_ACTIVITY_TAGS_RETRIEVE =
+        "rest:get:/animalevent/exportTags/{farmId}/{eventId}";
+    public static final String DELETE_EID_TAG =
+        "rest:get:/tags/{farmId}/delete/eid/{eid}";
+    public static final String DELETE_EID_ORDER_GROUP =
+        "rest:get:/tags/{farmId}/delete/order-group/{tagOrderGroupId}";
+
+    public static final String ANIMAL_ACTIVITY_RETRIEVE =
+        "rest:get:/animalevent/activities/{farmId}/{eventId}";
+    public static final String ANIMAL_MOB_UPDATE = "rest:post:/mob/update";
+
+    public static final String ANIMALS_ON_FARM_SUMMARY_LIST =
+        "rest:get:/animalsummary/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String ANIMALS_OFF_FARM_SUMMARY_LIST =
+        "rest:get:/animalofffarmsummary/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String ANIMALS_OFF_FARM_AT_DATE_LIST =
+        "rest:post:/animalofffarmatdate/list/";
+    public static final String ANIMALS_IN_FARM_AT_DATE_LIST =
+        "rest:post:/animalinfarmsummary/list/{"
+            + MessageConstants.INCLUDE_ANIMAL_DETAIL + "}";
+    public static final String ANIMAL_LOOKUP_LIST =
+        "rest:get:/animallookup/list/{lastRefresh}";
+    public static final String ANIMAL_LOOKUP_LIST_COMPRESSED =
+        "rest:get:/animallookup/list/{lastRefresh}/{compressed}";
+    public static final String ANIMAL_BREEDS_LIST =
+        "rest:get:/animalbreeds/list/{lastRefresh}";
+    public static final String ANIMAL_BREEDS_LIST_COMPRESSED =
+        "rest:get:/animalbreeds/list/{lastRefresh}/{compressed}";
+    public static final String ANIMAL_REVENUE_GROUPS_LIST =
+        "rest:get:/revenuegroups/list/{businessUnitId}/{lastRefresh}";
+    public static final String ANIMAL_HERDS_LIST =
+        "rest:get:/herds/list/{businessUnitId}/{lastRefresh}";
+    public static final String ANIMAL_HERDS_LIST_COMPRESSED =
+        "rest:get:/herds/list/{businessUnitId}/{lastRefresh}/{compressed}";
+    public static final String ANIMAL_CLASSES_LIST =
+        "rest:get:/animalclasses/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String ANIMAL_CURRENT_STOCK_SUMMARY =
+        "rest:get:/animal/stock/summary/{farmId}/{animalTypeId}/{compressed}";
+    public static final String ANIMAL_DESCRIPTION_FAVOURITES_LIST =
+        "rest:get:/animaldescriptionfavourites/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String ANIMAL_OWNER_LOCATIONS =
+        "rest:get:/animalownerlocations/list/{farmId}/{startDate}/{endDate}";
+    public static final String COMPANY_EVENT_CATEGORIES_LIST =
+        "rest:get:/companyeventcategories/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String GET_MOVE_DELETION_INFO =
+        "rest:get:/animalmove/delete/info/{farmId}/{moveEventId}";
+    public static final String GET_PURCHASE_DELETION_INFO =
+        "rest:get:/animalpurchase/delete/info/{farmId}/{eventId}";
+
+    public static final String ANIMAL_BREEDS_ALL_LIST =
+        "rest:get:/animal/breed/list";
+    public static final String ANIMAL_BREED_SAVE_ORG =
+        "rest:post:/animal/breed/save";
+    public static final String ANIMAL_BREED_DELETE_ORG =
+        "rest:get:/animal/breed/delete/{breedId}";
+
+    public static final String GRAZING_MOB_COLOURS_LIST =
+        "rest:get:/grazingmobcolours/list/{lastRefresh}/{compressed}";
+    public static final String GRAZING_FEES_LIST =
+        "rest:get:/grazingfees/list/{companyId}/{lastRefresh}/{compressed}";
+    public static final String WEIGHT_TARGETS_LIST =
+        "rest:get:/weighttargets/list/{businessUnitId}/{lastRefresh}/{compressed}";
+    public static final String GRAZING_CONTRACTS_LIST =
+        "rest:get:/grazingcontractsforowner/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String GRAZING_CONTRACTS_LIST_FARMER =
+        "rest:get:/grazingcontractsforfarmer/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String GRAZING_CONTRACTS_CHANGE_BREED =
+        "rest:post:/grazingcontract/breed/change";
+
+    public static final String ANIMAL_TREATMENT_TYPES =
+        "rest:get:/animaltreatmenttypes/list/{lastRefresh}/{compressed}";
+    public static final String ANIMAL_TREATMENT_METHODS =
+        "rest:get:/animaltreatmentmethods/list/{lastRefresh}/{compressed}";
+    public static final String ANIMAL_TREATMENT_UNIT_TYPES =
+        "rest:get:/animaltreatmentunittypes/list/{lastRefresh}/{compressed}";
+    public static final String ANIMAL_TREATMENT_PRODUCTS =
+        "rest:get:/animaltreatments/list/{businessUnitId}/{lastRefresh}/{compressed}";
+    public static final String ANIMAL_SUPPLEMENTARY_FEED_PRODUCTS =
+        "rest:get:/supplementaryfeed/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String ANIMAL_SUPPLEMENTARY_FEED_PRODUCT_OPT_OUTS =
+        "rest:get:/supplementaryfeedoptout/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String ANIMAL_SUPPLEMENTARY_FEED_PRODUCT_BALE_SIZES =
+        "rest:get:/supplementaryfeedbalesizes/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String ANIMAL_SUPPLEMENTARY_FEED_TYPE =
+        "rest:get:/supplementaryfeedtype/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String ANIMAL_SUPPLEMENTARY_FEED_TYPE_OPT_OUTS =
+        "rest:get:/supplementaryfeedtypeoptout/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String ANIMAL_DRY_MATTER_COMBINATIONS_TYPE =
+        "rest:get:/drymattercombinations/list/{lastRefresh}/{compressed}";
+    public static final String DRY_OFF_REASON_TYPES =
+        "rest:get:/dryoffreasontypes/list/{lastRefresh}/{compressed}";
+    public static final String ANIMAL_PROBLEMS =
+        "rest:get:/animalproblems/list/{lastRefresh}/{compressed}";
+
+    public static final String ANIMAL_REINSTATE =
+        "rest:post:/animalfate/reinstate";
+
+    public static final String GET_ANIMAL_SUMMARIES = "direct:getAnimalSummaries";
+
+    public static final String GET_ACTIVE_MOBS_ANIMAL_TYPE =
+        "rest:get:/activemobs/{farmId}";
+    public static final String GET_ACTIVE_MOBS_ANIMAL_TYPE_2 =
+        "rest:get:/activemobs/{farmId}/{lastRefresh}/{compressed}";
+
+    public static final String SUPPLEMENTARY_FEED_TYPE_ORG_LIST =
+        "rest:get:/supplementaryfeedtypes/maintain/org/list/{organisationId}";
+    public static final String SUPPLEMENTARY_FEED_TYPE_ORG_TOGGLE =
+        "rest:get:/supplementaryfeedtypes/maintain/org/toggle/{organisationId}/{typeId}";
+    public static final String SUPPLEMENTARY_FEED_TYPE_ORG_DELETE =
+        "rest:get:/supplementaryfeedtypes/maintain/org/delete/{organisationId}/{typeId}";
+    public static final String SUPPLEMENTARY_FEED_TYPE_ORG_SAVE =
+        "rest:post:/supplementaryfeedtypes/maintain/org/save/{organisationId}";
+
+    public static final String KILLSHEETS_DATERANGE =
+        "rest:get:/killsheets/list/{farmId}/{animalTypeId}/{fromDate}/{toDate}/{beefEQ}";
+    public static final String KILLSHEETS_CARCASSTYPE_DATERANGE =
+        "rest:get:/killsheetscarcasstype/list/{farmId}/{carcassTypeId}/{fromDate}/{toDate}";
+    public static final String KILLSHEETS_CARCASSTYPE_DATERANGE_AND_PROCESSOR =
+        "rest:get:/killsheetscarcasstype/list/{farmId}/{carcassTypeId}/{fromDate}/{toDate}/{processorIds}";
+    public static final String KILLSHEETS_DATERANGE_AND_PROCESSOR =
+        "rest:get:/killsheets/list/{farmId}/{animalTypeId}/{fromDate}/{toDate}/{beefEQ}/{processorIds}";
+    // internal rest services - land management
+    public static final String PADDOCK_UPDATE_DETAILS =
+        "rest:post:/paddocks/update/{farmId}/{paddockId}";
+    public static final String GET_FARM = "rest:get:/farms/view/{farmId}";
+    public static final String GET_FARM_REVENUE_GROUPS =
+        "rest:get:/farmrevenuegroups/{farmId}";
+    public static final String GET_FULL_FARM =
+        "rest:get:/farms/full/view/{farmId}";
+    public static final String GET_REGIONS = "rest:get:/farms/regions/{country}";
+
+    public static final String UPDATE_FULL_FARM =
+        "rest:post:/farms/full/view/{farmId}";
+    public static final String GET_FATE_TYPES =
+        "rest:get:/death/fatecauses/{country}";
+    public static final String GET_ANIMAL_HISTORY =
+        "rest:get:/animal/history/{farmId}/{eid}";
+    public static final String GET_ANIMAL_BY_MANAGEMENT_TAG =
+        "rest:get:/animal/by/management/{farmId}/{managementTag}";
+    public static final String FARMS_LIST =
+        "rest:get:/farms/list/{lastRefresh}/{compressed}";
+    public static final String REFRESH_FERTILISER_JOB =
+        "rest:get:/refresh/fertiliser/{farmId}/{contractorReference}";
+    public static final String FARMS_LIST_COUNTRY =
+        "rest:get:/farms/country/{countryId}";
+    public static final String FARMS_LIST_COUNTRY_REQUIRING =
+        "rest:get:/farms/country/{countryId}/{farmId}";
+    public static final String SIMPLE_VERSION_OF_ALL_FARMS_LIST =
+        "rest:get:/simpleversionofallfarm/list/{farmId}/{organisationId}/{lastRefresh}/{compressed}";
+    public static final String FIGURED_FARMS_IN_ORG =
+        "rest:get:/organisation/{organisationId}/figuredfarms";
+    public static final String FIGURED_SETUP_ORG =
+        "rest:post:/organisation/{organisationId}/setup/figured";
+    public static final String FIGURED_SETUP_ORG_GET =
+        "rest:get:/organisation/{organisationId}/get/setup/figured";
+    public static final String SIMPLE_VERSION_OF_FARMS_LIST =
+        "rest:get:/simpleversionoffarm/list/{farmId}/{organisationId}/{lastRefresh}/{compressed}";
+    public static final String LANDAPPLICATIONS_LIST =
+        "rest:get:/landapplications/list/{farmId}/{alwaysIncludeGlobal}/{lastRefresh}/{compressed}";
+    public static final String LANDAPPLICATIONS_OPTOUT =
+        "rest:get:/landapplicationsoptout/list/{farmId}/{compressed}";
+    public static final String LANDAPPLICATIONS_OPTOUT_COMPRESSED =
+        "rest:get:/landapplicationsoptout/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String FORAGE_LIST =
+        "rest:get:/landapplications/forage/{farmId}";
+    public static final String FAVOURITES =
+        "rest:get:/favourites/{farmId}/{lastRefresh}/{compressed}";
+    public static final String SUPPLIERS_LIST =
+        "rest:get:/suppliers/list/{lastRefresh}/{compressed}";
+    public static final String PLANTABLE_SUBMIT =
+        "rest:post:/plantableactivity/submit/{farmId}";
+    public static final String PLANTABLE_SUBMIT2 =
+        "rest:post:/plantableactivity/submit/{farmId}/{username}";
+    public static final String FERTILISER_SUBMIT =
+        "rest:post:/fertiliseractivity/submit/{farmId}/{userId}";
+    public static final String EFFLUENT_SUBMIT =
+        "rest:post:/effluentactivity/submit/{farmId}/{userId}";
+    public static final String IRRIGATION_SUBMIT =
+        "rest:post:/irrigationactivity/submit/{farmId}/{userId}";
+    public static final String MOVEMENT_DAY_PROCESS =
+        "rest:get:/movementday/process/{farmId}/{animal-event-id}";
+    public static final String MOVEMENT_DAY_PROCESS_DIRECT = "direct:/movementdaydirect/process";
+    public static final String PASTURECOVER_SUBMIT =
+        "rest:post:/pastureCover/submit/{farmId}/{JMSXGroupID}";
+    public static final String PASTURECOVER_SUBMIT_SIMPLE =
+        "rest:post:/pastureCover/simple/submit/{farmId}";
+    public static final String PASTURECOVER_FIND =
+        "rest:get:/pasturecover/find/{farmId}/{activityId}";
+    public static final String PASTURECOVER_FINDBYDATE =
+        "rest:get:/pasturecover/findbydate/{eventDate}/{mode}/{farmId}/{pasturecovertype}/{blocktypeid}";
+    public static final String LAST_PASTURECOVER_BEFORE_DATE =
+        "rest:get:/pasturecover/findlastbeforedate/{date}/{farmId}";
+
+    public static final String PASTUREAREA_SUBMIT =
+        "rest:post:/farm/pasturewedgearea/submit/{farmId}";
+
+    public static final String QUEUE_PASTURE_COVER_WIRETAP =
+        "direct:farmiq_pasture_wiretap" + EnvironmentResolver.getEnvIdentifier();
+    public static final String QUEUE_BENCHMARK =
+        "direct:farmiq_benchmark" + EnvironmentResolver.getEnvIdentifier();
+
+    public static final String CHEMICAL_UNIT_TYPES =
+        "rest:get:/chemicalunittypes/list/{lastRefresh}/{compressed}";
+    public static final String CHEMICAL_SUBMIT =
+        "rest:post:/chemicalactivity/submit/{farmId}/{JMSXGroupID}";
+    public static final String GENERALLAND_SUBMIT =
+        "rest:post:/generallandactivity/submit/{farmId}/{JMSXGroupID}";
+    public static final String HARVEST_SUBMIT =
+        "rest:post:/harvestactivity/submit/{farmId}/{JMSXGroupID}";
+    public static final String HARVEST_SYNCRONOUS_SUBMIT =
+        "rest:post:/harvestactivity/synchronous/submit/{farmId}";
+
+    public static final String STAFF_LIST =
+        "rest:get:/staff/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String OTHER_STAFF_LIST =
+        "rest:get:/otherstaff/list/{farmId}/{organisationId}";
+    public static final String OTHER_STAFF_LIST_COMPRESSED =
+        "rest:get:/otherstaff/list/{farmId}/{organisationId}/{lastRefresh}/{compressed}";
+
+    public static final String STAFF_LIST_BY_COMPANY =
+        "rest:get:/staff/list/{farmId}/{companyId}";
+    public static final String EMPLOYED_BY_COMPANY =
+        "rest:get:/company/staff/list/{companyId}";
+
+    public static final String VISITORS_LIST =
+        "rest:get:/visitors/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String FAVOURITE_COMPANIES_LIST =
+        "rest:get:/companies/favourites/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String AGRIVISIT_USERS_LIST =
+        "rest:get:/agrivisit/users/list/{farmId}";
+    public static final String AGRIVISIT_USERS_LIST_FOR_FARM =
+        "rest:get:/agrivisit/users/forfarm/list/{farmId}";
+    public static final String AGRIVISIT_USERS_LIST_FOR_FARM_COMPRESSED =
+        "rest:get:/agrivisit/users/forfarm/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String USERS_SEARCH_AGRIVISIT =
+        "rest:get:/users/agrivisit/{searchCriteria}/{farmId}";
+    public static final String LAND_LINES_LIST =
+        "rest:get:/landline/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String WEATHER_STATION_LIST =
+        "rest:get:/weatherstation/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String HAZARDS_ON_FARM_LIST =
+        "rest:get:/hazardsonfarm/list/{farmId}/{compressed}";
+    public static final String DEFAULT_FEATURE_LIST =
+        "rest:get:/defaultfeatures/list/{farmId}/{compressed}";
+    public static final String LAND_ACTIVITIES_LIST =
+        "rest:get:/landactivities/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String LAND_ACTIVITIES_DATE =
+        "rest:get:/landactivities/date/{farmId}/{eventDate}/{eventStatus}";
+    public static final String VIEW_ACTIVITIES_PADDOCK =
+        "rest:get:/landactivities/view/{farmId}/{paddockId}";
+    public static final String FARM_PREFERENCE_SUBMIT =
+        "rest:post:/farmpreference/submit/{farmId}";
+    public static final String LAND_ACTIVITY_ID =
+        "rest:get:/landactivity/find/{farmId}/{landActivityId}";
+    public static final String LAST_PASTURE_COVERS =
+        "rest:get:/pasturecovers/last/{farmId}";
+    public static final String LAST_PASTURE_COVERS_COMPRESSED =
+        "rest:get:/pasturecovers/last/{farmId}/{lastRefresh}/{compressed}";
+    public static final String SPRAYER_LIST =
+        "rest:get:/sprayers/{farmId}";
+    public static final String SPRAYER_LIST_COMPRESSED =
+        "rest:get:/sprayers/{farmId}/{lastRefresh}/{compressed}";
+    public static final String IRRIGATORS_LIST =
+        "rest:get:/irrigators/{farmId}";
+    public static final String IRRIGATORS_LIST_COMPRESSED =
+        "rest:get:/irrigators/{farmId}/{lastRefresh}/{compressed}";
+    public static final String HAZARD_TYPES_LIST =
+        "rest:get:/hazardtypes/list/{farmId}";
+
+    public static final String HAZARD_TYPES_LIST_2 =
+        "rest:get:/hazardtypes/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String EXCLUSIONZONE_TYPES_LIST =
+        "rest:get:/exclusionzonetypes/list/{farmId}";
+    public static final String EXCLUSIONZONE_TYPES_LIST_COMPRESSED =
+        "rest:get:/exclusionzonetypes/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String HAZARD_CATEGORIES_LIST =
+        "rest:get:/hazardcategories/list/{organisationId}";
+    public static final String HAZARD_CATEGORIES_LIST_2 =
+        "rest:get:/hazardcategories/list/{organisationId}/{lastRefresh}/{compressed}";
+    public static final String HAZARD_REGISTER_HAZARD_SUMMARY =
+        "rest:get:/hazardregisterhazardsummary/{farmId}";
+    public static final String HAZARD_REGISTER_HAZARD_SUMMARY_SIMPLE =
+        "rest:get:/hazardregisterhazardsummarysimple/{farmId}";
+    public static final String FARM_BLOCK_CREATE =
+        "rest:post:/farms/{farmId}/blocks";
+    public static final String FARM_BLOCK_UPDATE =
+        "rest:post:/farms/{farmId}/blocks/{blockId}";
+    public static final String FARM_BLOCK_DELETE =
+        "rest:post:/farms/{farmId}/blocks/{blockId}/delete";
+    public static final String FARM_BLOCK_TYPE_DELETE =
+        "rest:post:/farms/{farmId}/blocktype/{blockTypeId}/delete";
+    public static final String FARM_BLOCK_TYPE_UPDATE =
+        "rest:post:/farms/{farmId}/blocktype";
+
+    public static final String UPDATE_VISITOR_LOCATION =
+        "rest:post:/visit/update/location/save";
+    public static final String GET_VISITOR_LOCATIONS_ON_FARM =
+        "rest:get:/farm/get/visitor/locations/{farmId}";
+
+    // internal rest services - farm search
+    public static final String FARMS_SEARCH =
+        "rest:get:/farms/search/{farmId}/{searchType}/{includeProcessors}/{farmiqFarmsOnly}/{includeSelf}/{onlyWithAgreementForCompanyId}/{onlyWithAgreementType}/{searchCriteria}";
+    public static final String FARMS_SEARCH_GLOBAL =
+        "rest:get:/farms/globalSearch/{searchType}/{includeProcessors}/{searchCriteria}";
+    public static final String FARMS_SEARCH_AGRIVISIT =
+        "rest:get:/farms/agrivisit/{searchCriteria}";
+    public static final String FARMS_SEARCH_ORG =
+        "rest:get:/farms/orgSearch/{orgId}/{searchType}/{includeProcessors}/{farmiqFarmsOnly}/{searchCriteria}";
+    public static final String FARMS_VALIDATE_CREATE_NON_FARMIQ =
+        "rest:post:/farms/validate/nonfarmiq";
+    public static final String FARMS_PERSIST_NON_FARMIQ =
+        "rest:post:/farms/persist/nonfarmiq/{farmId}";
+    public static final String ORG_PERSIST_NON_FARMIQ =
+        "rest:post:/org/persist/nonfarmiq/{orgId}";
+    public static final String FARMS_DELETE_NON_FARMIQ =
+        "rest:get:/farms/delete/nonfarmiq/{farmId}/{nonFarmIqId}";
+    public static final String ORG_DELETE_NON_FARMIQ =
+        "rest:get:/org/delete/nonfarmiq/{orgId}/{nonFarmIqId}";
+    public static final String TASKS_FOR_ENV_RESPONSE =
+        "rest:get:/farms/environment/tasks/{farmId}/{responseId}";
+    public static final String TASKS_FOR_EQUIPMENT =
+        "rest:get:/farms/equipment/tasks/{farmId}/{equipmentId}";
+
+    public static final String GET_BATCH_USAGE_PRODUCT =
+        "rest:get:/farms/batch/usage/{farmId}/{batchType}/{productId}/{date}";
+    public static final String GET_BATCH_USAGE =
+        "rest:get:/farms/batch/usage/{farmId}/{batchType}/{date}";
+
+    public static final String ACKNOWLEDGE_NOTIFICATION =
+        "rest:get:/farms/notifications/systemnotification/acknowledge/{notificationId}";
+    public static final String SEEN_NOTIFICATION =
+        "rest:get:/farms/notifications/systemnotification/seen/{notificationId}";
+
+    public static final String PIN_NOTIFICATION =
+        "rest:get:/farms/notifications/systemnotification/pin/add/{notificationId}";
+    public static final String PIN_REMOVE_NOTIFICATION =
+        "rest:get:/farms/notifications/systemnotification/pin/remove/{pinId}";
+    public static final String MARK_NOTIFICATION_READ =
+        "rest:get:/farms/notifications/systemnotification/read/{dateFrom}/{dateTo}";
+    public static final String QET_QUERIES =
+        "rest:get:/farms/queries/get/{farmId}";
+    public static final String REMOVE_QUERY =
+        "rest:get:/farms/queries/remove/{farmId}/{id}";
+
+    // internal rest services - file retrieval
+    public static final String FILE_LIST = "rest:get:/files/{farmId}";
+    public static final String FILES_UPLOAD = "rest:post:/files/upload/{farmid}";
+    public static final String FILE_RETRIEVE =
+        "rest:get:/files/{farmId}/{fileId}";
+
+    public static final String FILE_RENAME =
+        "rest:post:/files/rename/{farmId}/{fileId}";
+    public static final String FILE_REMOVE =
+        "rest:post:/files/remove/{farmId}/{fileId}";
+
+    // map services
+    public static final String MERGE_PADDOCKS =
+        "rest:post:/paddocks/merge/{farmId}";
+    public static final String MERGE_PADDOCKS_PREVIEW =
+        "rest:post:/paddocks/mergepreview/{farmId}";
+
+    public static final String SPLIT_PADDOCKS =
+        "rest:post:/paddocks/split/{farmId}";
+    public static final String SPLIT_PADDOCKS_PREVIEW =
+        "rest:post:/paddocks/splitpreview/{farmId}";
+
+    public static final String INTERIOR_PADDOCK_PREVIEW =
+        "rest:post:/paddocks/donutpreview/{farmId}";
+    public static final String INTERIOR_PADDOCK =
+        "rest:post:/paddocks/donut/{farmId}";
+
+    public static final String PADDOCKS_DRAW_LINE =
+        "rest:post:/paddocks/drawLine/{farmId}";
+    public static final String PADDOCKS_SAVE_LINE =
+        "rest:post:/paddocks/saveLandLine/{farmId}";
+    public static final String PADDOCKS_SAVE_LINES =
+        "rest:post:/paddocks/saveLines/{farmId}";
+    public static final String PADDOCKS_EDIT_LINE =
+        "rest:post:/paddocks/editLine/{farmId}";
+    public static final String PADDOCKS_DELTE_LINE =
+        "rest:post:/paddocks/deleteLine/{farmId}";
+    public static final String PADDOCKS_REMOVE_LINE =
+        "rest:post:/paddocks/removeLine/{farmId}";
+    public static final String PADDOCKS_REMOVE_HAZARD =
+        "rest:post:/paddocks/removeHazard/{farmId}";
+    public static final String PADDOCKS_REMOVE_HAZARD_2 =
+        "rest:post:/paddocks/removeHazard/{farmId}/{userId}";
+    public static final String PADDOCKS_EDIT_LINE_COLOUR =
+        "rest:post:/paddocks/editLineColour/{farmId}";
+    public static final String SAVE_WEATHER_STATION =
+        "rest:post:/saveWeatherStation/{farmId}";
+    public static final String SAVE_OBSERVATION_POINT =
+        "rest:post:/saveObservationPoint/{farmId}";
+    public static final String SAVE_BIRD_ASSESSMENT =
+        "rest:post:/assessment/bird/{farmId}";
+    public static final String SAVE_FRESHWATER_ASSESSMENT =
+        "rest:post:/assessment/freshwater/{farmId}";
+    public static final String QUESTIONS_FOR_ASSESSMENTS =
+        "rest:get:/questions/assessments";
+    public static final String MONITORED_SPECIES_BIRDS =
+        "rest:get:/species/assessments/birds";
+    public static final String MONITORED_SPECIES_FRESHWATER =
+        "rest:get:/species/assessments/freshwater";
+
+    public static final String QUESTIONS_FOR_ASSESSMENTS_2 =
+        "rest:get:/questions/assessments/{lastRefresh}/{nocompress}";
+    public static final String MONITORED_SPECIES_BIRDS_2 =
+        "rest:get:/species/assessments/birds/{lastRefresh}/{nocompress}";
+    public static final String MONITORED_SPECIES_FRESHWATER_2 =
+        "rest:get:/species/assessments/freshwater/{lastRefresh}/{nocompress}";
+
+    public static final String SAVE_EMERGENCY_FEATURE =
+        "rest:post:/saveEmergencyFeature/{farmId}";
+
+    public static final String PADDOCKS_SAVE_HAZARDS =
+        "rest:post:/paddocks/saveHazards/{farmId}";
+
+    public static final String EXTEND_FARM_PREVIEW =
+        "rest:post:/paddocks/extendpreview/{farmId}";
+    public static final String EXTEND_FARM =
+        "rest:post:/paddocks/extend/{farmId}";
+
+    public static final String ALTER_FOL_FARM = "rest:post:/fol/alter/{farmId}";
+
+    public static final String MAP_PRINT = "rest:get:/map/print/{key}";
+    public static final String MAP_POST_PRINTING_DETAILS =
+        "rest:post:/map/postMapPrintingDetails";
+    public static final String MAP_POST_PRINTING_DETAILSV2 =
+        "rest:post:/map/postMapPrintingDetailsV2";
+    public static final String MAP_PRINTV2 = "rest:get:/map/printV2/{key}";
+    public static final String MAP_PRINTV2_2 = "rest:get:/map/printV2/{key}/{filename}";
+
+    public static final String PADDOCKS_BY_NAME =
+        "rest:get:/paddocks/name/{farmId}/{paddockName}";
+    public static final String UPLOAD_CLIENT_LOGS = "rest:post:/user/logs/upload";
+
+    public static final String MIGRATE_FARM =
+        "rest:get:/farms/migratefarm/{pilotId}";
+    // internal rest services - notifications
+    public static final String FARM_NOTIFICATIONS_LIST =
+        "rest:post:/farmnotifications/list";
+    public static final String FARM_MOBILE_NOTIFICATIONS_LIST =
+        "rest:post:/mobilefarmnotifications/list";
+    public static final String COMPANY_NOTIFICATIONS_LIST =
+        "rest:post:/companynotifications/list";
+    public static final String FARM_NOTIFICATION_DELETE_POST =
+        "rest:post:/farmnotifications/delete/{farmId}/{notificationId}/{userId}";
+    public static final String FARM_NOTIFICATION_DELETE_GET =
+        "rest:get:/farmnotifications/delete/{farmId}/{notificationId}";
+    public static final String FARM_NOTIFICATION_JSON_GET =
+        "rest:get:/notification/json/get/{notificationId}/{farmId}";
+    public static final String ADMIN_LIST_INPROGRESS_NOTIFICATIONS =
+        "rest:get:/admin/inprogress/notifications/list";
+    public static final String ADMIN_RESUBMIT_INPROGRESS_NOTIFICATIONS =
+        "rest:post:/admin/inprogress/notifications/resubmit";
+    public static final String ADMIN_CLEAR_INPROGRESS_NOTIFICATIONS =
+        "rest:post:/admin/inprogress/notifications/delete";
+
+    // nait maintenance
+    public static final String ADMIN_LIST_UNPROCESSED_NAIT_TXNS =
+        "rest:get:/admin/nait/unprocessed/list/{dateFrom}";
+    public static final String ADMIN_RESUBMIT_UNPROCESSED_NAIT_TXNS =
+        "rest:post:/admin/nait/unprocessed/resubmit";
+    public static final String ADMIN_NAIT_MAX_RETRIES =
+        "rest:get:/admin/nait/max/retries";
+
+    // External rest services
+    public static final String EXTERNAL_FARM_DETAILS_GET =
+        "rest:get:/external/farmdetails/{farmId}/{paddockId}";
+    public static final String EXTERNAL_FARM_DETAILS_POST =
+        "rest:post:/external/farmdetails/{farmId}/{paddockId}";
+
+    public static final String EXTERNAL_REGISTER_TAGS_GET =
+        "rest:get:/external/registertags/{farmId}";
+    public static final String EXTERNAL_REGISTER_TAGS_POST =
+        "rest:post:/external/registertags/{farmId}";
+    public static final String EXTERNAL_SHOW_TAGS_GET =
+        "rest:get:/external/showtags/{farmId}";
+    public static final String EXTERNAL_SHOW_TAGS_POST =
+        "rest:post:/external/showtags/{farmId}";
+
+    public static final String EXTERNAL_PASTURE_COVER =
+        "rest:post:/external/pasturecovers/jenquip";
+    public static final String EXTERNAL_PASTURE_COVER_GPS =
+        "rest:post:/external/pasturecovers/gps";
+    // Internal direct routes
+    public static final String DIRECT_JSON_TRANSFORM = "direct:farmiq:jsonresponse";
+    public static final String DIRECT_RETURN_EXCEPTION = "direct:farmiq:jsonexception";
+    public static final String DIRECT_TXT_TRANSFORM = "direct:farmiq:txtresponse";
+
+    public static final String QUEUE_AUTO_NOTIFY_NAIT =
+        "rest:post:/autoresolution/notifynait/{farmid}/{username}";
+    public static final String ADD_TAGS_TO_NAIT =
+        "rest:post:/nait/addtags/{farmId}/{eventId}";
+    public static final String REMOVE_TAGS_SENT_TO_NAIT =
+        "rest:get:/nait/removetags/{farmId}/{eventId}";
+
+    public static final String CURRENT_USER =
+        "rest:get:/users/user/{lastRefresh}/{compressed}";
+    public static final String LOGGED_IN_USER = "rest:get:/users/loggedinuser";
+    public static final String USER_SEEN_CODE = "rest:get:/users/seen/{code}";
+    public static final String USER_CHANGE_SETTINGS =
+        "rest:get:/users/changesettings/{useCalendar}/{noCache}";
+    public static final String SOIL_TYPES_LIST =
+        "rest:get:/soiltypes/list/{lastRefresh}/{compressed}";
+    public static final String LAND_TYPES_LIST =
+        "rest:get:/landtypes/list/{lastRefresh}/{compressed}";
+    public static final String USER_MAP_DEFAULTS =
+        "rest:post:/users/mapdefaults/{userId}/{farmId}";
+    public static final String FARM_MAP_LEGENDS =
+        "rest:get:/maplegends/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String LAND_APPLICATION_METHODS =
+        "rest:get:/landapplications/methods/list/{lastRefresh}/{compressed}";
+    public static final String LAND_SEED_TREATMENTS =
+        "rest:get:/seedtreatments/list/{lastRefresh}/{compressed}";
+    public static final String FARM_BLOCK_TYPE = "rest:get:/blocktypes/{farmId}";
+    public static final String LAND_APPLICATION_TYPES =
+        "rest:get:/landapplicationtypes/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String ENDOPHYTE_TYPES =
+        "rest:get:/endophytetypes/list/{lastRefresh}/{compressed}";
+    public static final String ORGANISATION =
+        "rest:get:/organisation/{organisationId}";
+
+    public static final String ORGANISATION_ANIMAL_AGING_MONTH =
+        "rest:get:/organisation/animalagingmonth/{organisationId}";
+
+    public static final String ALL_LAND_APPLICATION_TYPES =
+        "rest:get:/getlandapplicationtypes/list";
+    public static final String DELETE_MAP_DEFAULTS =
+        "rest:get:/users/mapdefaults/{userId}/{farmId}/{id}";
+
+    // External rest services
+    public static final String REST_LOGIN_GET =
+        "rest:get:/login";
+    public static final String REST_LOGIN_POST =
+        "rest:post:/login";
+    public static final String REST_LOGIN_OPTIONS =
+        "rest:options:/login";
+    public static final String REST_LOGOUT = "rest:get:/logout";
+    public static final String REST_LOGOUT_CLEAR = "rest:get:/logout/cookies";
+
+    // external web services
+    public static final String EXTERNAL_NEW_FARM = "cxf:/external/farm/init?serviceClass="
+        + NotificationPort.class.getName();
+
+    public static final String CXF_TEMPLATE = "cxf://%s?serviceClass=%s&wrapped=true";
+
+    public static final String VALIDATE_KILLSHEETS = "cxf:/external/uploadkillsheets?serviceClass="
+        + MeatProcessorWebServices.class.getName();
+
+    public static final String EXTERNAL_FARM_STATUS_UPDATE =
+        "cxf:/external/farm/status?serviceClass="
+            + com.salesforce.workflow.farmstatus.NotificationPort.class.getName();
+    public static final String EXTERNAL_FARM_SUBSCRIPTION_UPDATE =
+        "cxf:/external/farm/subscription?serviceClass="
+            + com.salesforce.workflow.farmsubscription.NotificationPort.class.getName();
+
+    public static final String GET_ALLFLEX_TAGS_FOR_ORDER = "direct:allFlexOrder";
+    public static final String GET_ALLFLEX_TAGS_FOR_AHB = "direct:allFlexAhb";
+    public static final String GET_ALLFLEX_TAGS_TEMPLATE =
+        "%s://%s?authUsername=%s&authPassword=%s&authDomain=%s&authHost=farmiq";
+
+    public static final String DELETE_PADDOCKS =
+        "rest:post:/paddocks/delete/{farmId}";
+
+    // Admin
+    public static final String ADMIN_FORCE_SALE_RESOLUTION =
+        "rest:get:/admin/ResolveSales";
+    public static final String ADMIN_UPDATE_RESOLUTION_INTERVAL =
+        "rest:get:/admin/setAutoResolve/{minutes}";
+    public static final String ADMIN_RECREATE_OWNER_NOTIFY_ROUTES =
+        "rest:get:/admin/rebuildOwnerInterface";
+
+    // reports
+    public static final String NUTRIENT_REPORT =
+        "rest:post:/reports/nutrient/{farmId}";
+    public static final String SOILTEST_REPORT =
+        "rest:post:/reports/soiltests/{farmId}";
+    public static final String GRAZING_DAYS_REPORT =
+        "rest:post:/reports/grazingdays/{farmId}";
+    public static final String PASTURE_GROWTH_REPORT =
+        "rest:post:/reports/pasturegrowth/{farmId}";
+    public static final String PASTURE_WEDGE_REPORT_FARM_LOOKUPS =
+        "rest:get:/reports/pasturewedge/lookups/{farmId}";
+    public static final String PADDOCK_HISTORY_REPORT =
+        "rest:post:/reports/paddockhistory/{farmId}";
+    public static final String REPORTABLE_SOIL_CHARACTERISTICS =
+        "rest:get:/reports/soilcharacteristics/reportable/{farmId}";
+
+    public static final String REPORTING_FAVOURITES =
+        "rest:get:/reports/favourites/toggle/{reportDefinitionId}";
+    public static final String REPORTING_FAVOURITES_CUSTOM_REPORT =
+        "rest:get:/reports/favourites/toggle/customreport/{customReportId}";
+
+    public static final String GET_TAGS_FOR_GROUP =
+        "rest:get:/groups/exportTags/{farmId}/{groupId}";
+
+    public static final String VALIDATE_GROUP_FOR_FARM =
+        "rest:post:/reports/groups/validate";
+    public static final String ADD_SPRAYER = "rest:post:/farms/sprayers/add";
+    public static final String REMOVE_SPRAYER =
+        "rest:get:/farms/sprayers/remove/{farmId}/{sprayerId}";
+
+    public static final String ADD_IRRIGATOR = "rest:post:/farms/irrigators/add";
+    public static final String REMOVE_IRRIGATOR =
+        "rest:get:/farms/irrigators/remove/{farmId}/{irrigatorId}";
+
+    public static final String REMOVE_OBSERVATION_POINT =
+        "rest:get:/farms/assessmentSite/remove/{farmId}/{pointId}";
+    public static final String DRAFT_LIST_COUNT =
+        "rest:post:/reports/draftlist/count/{farmId}";
+    // system config
+    public static final String SYSTEM_CONFIG_LIST =
+        "rest:get:/systemconfig/list/{lastRefresh}";
+    public static final String SYSTEM_CONFIG_LIST_COMPRESSED =
+        "rest:get:/systemconfig/list/{lastRefresh}/{compressed}";
+
+    // Mobile App rest services
+    public static final String FILE_UPLOAD = "rest:post:/mobile/file/{farmid}/{userId}";
+    public static final String SAVE_BT_DEVICE =
+        "rest:post:/mobile/device/{farmId}/{userId}";
+    public static final String DELETE_BT_DEVICE =
+        "rest:post:/mobile/device/{farmId}/remove/{username}";
+    public static final String BT_DEVICE_LIST =
+        "rest:get:/mobile/device/{farmId}/{lastRefresh}/{compressed}";
+    public static final String MOBILE_ANIMALS_SUMMARY_LIST =
+        "rest:get:/mobileanimalsummary/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String CALENDAR_ACTIVITIES =
+        "rest:get:/calendaractivities/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String MOBILE_SERVER_COMPATIBILITY =
+        "rest:get:/mobileservercompatibilityversion";
+    public static final String MOBILE_CALENDAR_ACTIVITIES =
+        "rest:get:/mobile/diary/{farmId}/{fromDate}/{toDate}/{isAnimal}/{isLand}/{isProduct}/{isVisits}";
+
+    // Web calendar services
+    public static final String LIST_CALENDAR_ACTIVITIES =
+        "rest:post:/calender/list/activities";
+    public static final String LIST_GRAZIERS_FOR_CALENDAR =
+        "rest:get:/calendar/list/graziers/{farmId}";
+    public static final String LIST_TASK_CATEGORIES_FOR_FARM_CALENDAR =
+        "rest:get:/calendar/list/task/categories/farm/{farmId}";
+    public static final String LIST_TASK_CATEGORIES_FOR_COMPANY_CALENDAR =
+        "rest:get:/calendar/list/task/categories/company/{companyId}";
+    public static final String LIST_STAFF_FOR_FARM_CALENDAR =
+        "rest:get:/calendar/list/staff/farm/{farmId}";
+    public static final String LIST_STAFF_FOR_COMPANY_CALENDAR =
+        "rest:get:/calendar/list/staff/company/{companyId}";
+    public static final String LIST_PLANS_FOR_FARM_CALENDAR =
+        "rest:get:/calendar/list/plans/farm/{farmId}";
+    public static final String LIST_ANIMAL_TYPES_FOR_FARM_CALENDAR =
+        "rest:get:/calendar/list/animaltypes/farm/{farmId}";
+    public static final String LIST_ANIMAL_ACTIVITIES_FOR_CALENDAR =
+        "rest:get:/calendar/list/animal/activities";
+    public static final String LIST_LAND_ACTIVITIES_FOR_CALENDAR =
+        "rest:get:/calendar/list/land/activities";
+    public static final String DELETE_ACTIVITY_FROM_FARM_CALENDAR =
+        "rest:get:/calendar/delete/activity/farm/{farmId}/{activityId}/{activityType}";
+    public static final String DELETE_RECURRING_ACTIVITY_FROM_FARM_CALENDAR =
+        "rest:get:/calendar/deleterecurring/activity/farm/{farmId}/{activityId}/{activityType}";
+    public static final String CANCEL_VISIT_FROM_FARM_CALENDAR =
+        "rest:post:/calendar/visit/cancel/farm/{farmId}/{activityId}";
+    public static final String SEPARATE_CONSTITUENTS_FROM_FARM_CALENDAR =
+        "rest:get:/calendar/separate/constituents/farm/{farmId}/{activityId}/{activityType}/{constituentId}";
+    public static final String SAVE_CALENDAR_NOTE_FOR_FARM =
+        "rest:post:/calendar/note/save/farm/{farmId}";
+
+    public static final String SAVE_ANIMAL_NOTE_FOR_FARM =
+        "rest:post:/animal/note/save/{farmId}/{animalId}";
+    public static final String UPDATE_ANIMAL_NOTE_FOR_FARM =
+        "rest:post:/animal/note/save/{farmId}/{animalId}/{noteId}";
+    public static final String DELETE_ANIMAL_NOTE_FOR_FARM =
+        "rest:get:/animal/note/delete/{farmId}/{animalId}/{noteId}";
+
+    public static final String GET_CALENDAR_SETTINGS =
+        "rest:get:/calender/settings/get";
+    public static final String SAVE_CALENDAR_SETTINGS =
+        "rest:post:/calender/settings/save";
+
+    public static final String DO_NOT_DISPLAY_WELCOME =
+        "rest:get:/user/welcome/hide/{farmId}";
+
+    // External rest services for monitoring the application
+    public static final String EXTERNAL_MONITOR_SERVER =
+        "rest:get:/external/monitoring/monitorserver";
+    public static final String EXTERNAL_MONITOR_END_TOEND =
+        "rest:get:/external/monitoring/monitorendtoend";
+    public static final String EXTERNAL_MONITOR_QUEUES =
+        "rest:get:/external/monitoring/monitorqueues";
+    public static final String EXTERNAL_MONITOR_FIGURED =
+        "rest:get:/external/monitoring/monitorfigured";
+
+    public static final String EXTERNAL_MONITOR_CONNECTION_POOL =
+        "rest:get:/monitoring/monitorconnectionpool";
+
+    public static final String FIND_FARM_PILOT_ID =
+        "rest:get:/farms/pilot/{pilotId}";
+
+    public static final String ANIMAL_WEIGHT_COUNT =
+        "rest:post:/reports/groups/animals/{farmId}";
+    public static final String ANIMAL_REPRODUCTION_COUNT =
+        "rest:post:/reports/groups/reproduction/{farmId}";
+    public static final String ANIMAL_WEIGHED_FORAGES =
+        "rest:post:/reports/groups/forages/animals/{farmId}";
+    public static final String ANIMAL_WEIGHED_TREATMENTS =
+        "rest:post:/reports/groups/treatments/animals/{farmId}";
+    public static final String ANIMAL_IN_SEASON_GROUP_COUNT =
+        "rest:post:/reports/groups/season/animals/{farmId}";
+
+    public static final String BENCHMARK_FARMS_COUNT =
+        "rest:post:/reports/benchmark/farms/{farmId}";
+
+    public static final String EXTERNAL_CALLAGHAN_QUERY_PASTURE =
+        "cxf:/external/callaghanpasture?loggingFeatureEnabled=true&serviceClass="
+            + PasturePort.class.getName();
+
+    public static final String EXTERNAL_STOCK_ADJUSTMENT_TRANSACTION =
+        "cxf:/external/stockadjustment?loggingFeatureEnabled=true&serviceClass="
+            + FinancePort.class.getName();
+    public static final String EXTERNAL_SAN_POSTING_TRANSACTION =
+        "cxf:/external/finance?loggingFeatureEnabled=true&serviceClass="
+            + FinancePort.class.getName();
+    public static final String EXTERNAL_SAN_QUERY_TRANSACTION =
+        "cxf:/external/san?loggingFeatureEnabled=true&serviceClass="
+            + SANPort.class.getName();
+    public static final String EXTERNAL_CASHMANAGER_QUERY =
+        "rest:get:/partners/cashmanager";
+    public static final String EXTERNAL_CASHMANAGER_QUERY_FARM =
+        "rest:get:/partners/cashmanager/{farmKey}";
+    public static final String EXTERNAL_CASHMANAGER_QUERY_ONE =
+        "rest:get:/partners/cashmanager/{farmKey}/{ref}";
+    public static final String EXTERNAL_CASHMANAGER_POST =
+        "rest:post:/partners/cashmanager/{farmKey}";
+    public static final String EXTERNAL_CASHMANAGER_POST_ONE =
+        "rest:post:/partners/cashmanager/{farmKey}/{ref}";
+
+    public static final String EXTERNAL_FARMAX_QUERY_FARM =
+        "rest:get:/partners/farmax/{farmKey}";
+    public static final String EXTERNAL_TRACKMAP_NOTIFY_FARM =
+        "rest:post:/public/trackmap";
+
+    public static final String ANIMAL_KILLSHEET_COUNT =
+        "rest:post:/reports/groups/killsheets/{farmId}";
+    public static final String BENCHMARK_KILLSHEETS_FARMS_COUNT =
+        "rest:post:/reports/benchmark/killsheets/farms/{farmId}";
+    public static final String ANIMAL_KILLSHEETS_MANUAL_UPLOAD =
+        "rest:post:/killsheets/{farmId}/upload";
+    public static final String ANIMAL_KILLSHEETS_MANUAL_CHECK =
+        "rest:get:/killsheets/{farmId}/{processorId}/{mobNumber}/check";
+    public static final String PASTURE_MANUAL_UPLOAD =
+        "rest:post:/pastures/{farmId}/upload";
+
+    public static final String PARTNER_SERVICE =
+        "cxf:/partners?serviceClass=" + Farmiq.class.getName();
+
+    public static final String FERTPLAN_NOTIFICATION_TRIGGER =
+        "quartz://fertPlanJob?cron=0+30+8+*+*+?"; // every 8 30am
+    public static final String AUTO_MOVE_STOCK_TRIGGER = "quartz://autoMoveStock?cron=0+30+4+*+*+?"; // every
+    // 8
+    // 30am
+
+    public static final String STOCK_TAKE_LOCK_TRIGGER = "quartz://stockTakeLock?cron=0+0+3+*+*+?"; // every
+
+    public static final String STOCKCARE_REMINDER_TRIGGER =
+        "quartz://farmReminderJob?cron=0+0+6+*+*+?"; // every 6am
+
+    public static final String TASK_REMAINDER_NOTIFICATION =
+        "quartz://taskReminderJob?cron=0+0+7+*+*+?"; // every 6am
+
+    public static final String TEMPORARY_TAG_TRIGGER =
+        "quartz://tempTagsJob?cron=0+0+5+*+*+?"; // every 5am
+
+    public static final String TODO_CLEANUP_TRIGGER = "quartz://todoCleanupJob?cron=0+0+1+*+*+?"; // every
+    // 1am
+    public static final String CARCASS_TRIGGER = "quartz://carcassFinder?cron=0+0+3+*+*+?"; // every
+    // 3am
+    public static final String UPDATE_SALESFORCE_USAGE_DATA =
+        "quartz://updateSalesforceUsageData?cron=0+5+3+*+*+?"; // every
+    // 3:05am
+    public static final String LANDCORP_STAFF_UPLOAD_TRIGGER =
+        "quartz://landcorpStaffUploadJob?cron=0+5+5+*+*+?"; // every
+    // 5:05am
+
+    public static final String HEALTH_AND_SAFETY_NOTIFICATION_TRIGGER =
+        "quartz://healthAndSafetyJob?cron=0+5+6+*+*+?"; // every
+    // 6:05am
+    public static final String FARM_UPGRADE_TRIGGER = "quartz://farmUpgradeJob?cron=0+58+23+*+*+?"; // every
+    // 23:58pm
+    public static final String MIRAKA_TRIGGER = "quartz://mirakaJob?cron=0+15+6+*+*+?"; // every
+    // 6:15am
+    public static final String INDUCTION_CLEANUP_TRIGGER =
+        "quartz://inductionCleanupJob?cron=0+55+23+*+*+?"; // every
+    // 1am
+    public static final String STOCKCARE_NOTIFICATION_TRIGGER =
+        "quartz://stockcareNotificationJob?cron=0+0+*+*+*+?"; // every
+    public static final String ONBOARDING_NOTIFICATION_TRIGGER =
+        "quartz://farmOnboardingJob?cron=0+0+*+*+*+?"; // every
+    public static final String ENV_PLAN_TASKS_REPORT_TRIGGER =
+        "quartz://envPlanTasksReportJob?cron=0+0+8+1+*+?"; // every
+    public static final String SIRE_DETERMINATION_TRIGGER =
+        "quartz://sireDeterminationJob?cron=0+30+6+*+*+?"; // every 6:30m
+    public static final String MOVEMENT_DAY_TRIGGER =
+        "quartz://movementDayJob?cron=4+30+5+*+*+?"; // every 4:30m
+    public static final String FINANCIAL_AGING =
+        "quartz://financialAging?cron=0+10+0+1+*+?"; // every 0:10 first month
+
+    public static final String CRV_TRIGGER_TRAIT_UPDATES =
+        "quartz://crvTraitUpdatesJob??cron=0+30+4+*+*+?"; // every 4:30am
+
+    public static final String FIGURED_RETRY =
+        "quartz://figuredRetry??cron=0+30+*+*+*+?"; // every hour on the half hour
+
+    public static final String SAMPLE_WEIGHTS_UPDATES =
+        "quartz://sampleWeightsUpdateJob??cron=0+45+4+*+*+?"; // every 4:45am
+
+    // first
+    // day
+    // of
+    // the
+    // month
+    // at
+    // 8am
+    // every hour on hour
+    public static final String IOT_TRIGGER = "quartz://iotJob?cron=0+0+*+*+*+?";
+    // every hour on half hour
+    public static final String VISITOR_ON_FARM_TRIGGER =
+        "quartz://visitorOnFarmNotificationJob?cron=0+30+*+*+*+?";
+    // every10 min
+    public static final String VISITOR_PUSH_NOTIFICATION_TRIGGER =
+        "quartz://visitorNotificationJob?cron=0+0/10+*+*+*+?";
+
+    // every 5am
+    public static final String GET_FARMLANDS_CARD_WHITELIST_TRIGGER =
+        "quartz://getFarmlandsCardWhitelistJob?cron=0+0+7+*+*+?";
+
+    public static final String HERD_TESTS_TRIGGER =
+        "quartz://herdTestsTrigger?cron=0+0+7+*+*+?";
+
+    public static final String EVENT_CATEGORIES_LIST =
+        "rest:get:/eventcategories/list/{farmId}";
+    public static final String EVENT_CATEGORIES_LIST_COMPRESSED =
+        "rest:get:/eventcategories/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String PRODUCT_BATCH_NUMBERS_LIST =
+        "rest:get:/productbatchnumbers/list/{farmId}";
+    public static final String PRODUCT_BATCH_NUMBERS_LIST_COMPRESSED =
+        "rest:get:/productbatchnumbers/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String PRODUCT_BATCH_NUMBERS_USAGE =
+        "rest:get:/productbatchnumberusage/list/{farmId}/{lastRefresh}/{compressed}";
+
+    public static final String PRODUCT_BATCH_NUMBERS_LIST_COMPANY =
+        "rest:get:/productbatchnumbers/list/{companyId}/{farmId}/{lastRefresh}/{compressed}";
+    public static final String PRODUCT_BATCH_NUMBERS_USAGE_COMPANY =
+        "rest:get:/productbatchnumberusage/list/{companyId}/{farmId}/{lastRefresh}/{compressed}";
+    public static final String ANIMAL_TREATMENT_PRODUCTS_COMPANY =
+        "rest:get:/animaltreatments/list/{companyId}/{farmId}/{lastRefresh}/{compressed}";
+
+    public static final String FARM_VETERINARIANS_LIST =
+        "rest:get:/farmveterinarians/list/{farmId}/{lastRefresh}/{compressed}";
+
+    // Weather
+    public static final String RECORD_WEATHER =
+        "rest:post:/weather/{record}/{farmId}/{seasonType}";
+    public static final String RECORD_WEATHER_FOR_DAYS =
+        "rest:post:/weather/{record}/days/{farmId}";
+    public static final String RECORD_WEATHER_FOR_DAYS_2 =
+        "rest:post:/weather/{record}/days/{farmId}/{userId}";
+    public static final String WEATHER =
+        "rest:get:/weather/{record}/forMonth/{farmId}/{month}";
+    public static final String WEATHER_AVERAGE =
+        "rest:get:/weather/{record}/forMonth/average/{farmId}/{month}";
+    public static final String WEATHER_SUMMARY =
+        "rest:get:/weather/summary/{record}/{farmId}/{seasonType}/{season}";
+    public static final String WEATHER_LONG_TERM_SUMMARY =
+        "rest:get:/weather/average/{record}/{farmId}/{seasonType}";
+    public static final String WEATHER_SINCE_LIST =
+        "rest:get:/weather/{record}/since/list/{farmId}/{numMonths}";
+
+    public static final String ALL_WEATHER_SINCE_LIST =
+        "rest:get:/weather/since/list/{farmId}/{numMonths}";
+
+    public static final String ALL_WEATHER_SINCE_LIST_2 =
+        "rest:get:/weather/since/list/{farmId}/{numMonths}/{nocompress}";
+
+    public static final String RECORD_WEATHER_FOR_STATION =
+        "rest:post:/weather/{record}/{farmId}/{seasonType}/for/{station}";
+    public static final String RECORD_WEATHER_FOR_DAYS_FOR_STATION =
+        "rest:post:/weather/{record}/days/{farmId}/for/{station}";
+    public static final String WEATHER_FOR_STATION =
+        "rest:get:/weather/{record}/forMonth/{farmId}/{month}/for/{station}";
+    public static final String WEATHER_FOR_STATION_AVERAGE =
+        "rest:get:/weather/{record}/forMonth/average/{farmId}/{month}/for/{station}";
+
+    public static final String WEATHER_SUMMARY_FOR_STATION =
+        "rest:get:/weather/summary/{record}/{farmId}/{seasonType}/{season}/for/{station}";
+    public static final String WEATHER_LONG_TERM_SUMMARY_FOR_STATION =
+        "rest:get:/weather/average/{record}/{farmId}/{seasonType}/for/{station}";
+    public static final String WEATHER_SINCE_LIST_FOR_STATION =
+        "rest:get:/weather/{record}/since/list/{farmId}/{numMonths}/for/{station}";
+
+    // health and safety mobile
+    public static final String INCIDENT_TYPES =
+        "rest:get:/incidenttypes/list/{farmId}/{lastRefresh}/{compressed}";
+
+    // Task categories
+    public static final String TASK_CATEGORIES =
+        "rest:get:/taskcategories/list/{businessUnitId}/{lastRefresh}/{compressed}";
+    public static final String TASK_CATEGORIES_OPT_OUTS =
+        "rest:get:/taskcategoriesoptouts/list/{businessUnitId}/{compressed}";
+    public static final String ADD_TASK = "rest:post:/farms/task/add";
+    public static final String ADD_TASK_2 = "rest:post:/farms/task/add/{userId}";
+    public static final String DELETE_TASK =
+        "rest:get:/task/delete/{farmId}/{taskId}";
+    public static final String DELETE_TASK_MOBILE =
+        "rest:post:/task/delete/{farmId}/{taskId}/{userId}";
+    public static final String DELETE_INSTANCE_TASK =
+        "rest:get:/task/deleteinstance/{farmId}/{taskId}/{dueDate}";
+    public static final String DELETE_INSTANCE_TASK_MOBILE =
+        "rest:post:/task/deleteinstance/{farmId}/{taskId}/{dueDate}/{userId}";
+    public static final String COMPLETE_TASK =
+        "rest:post:/task/complete/{farmId}/{taskId}";
+
+    public static final String COMPLETE_TASK_SIMPLE_GET =
+        "rest:get:/task/complete/{farmId}/{taskId}/{dueDate}";
+    public static final String COMPLETE_TASK_SIMPLE_POST =
+        "rest:post:/task/complete/{farmId}/{taskId}/{dueDate}";
+    public static final String COMPLETE_TASK_SIMPLE_POST_2 =
+        "rest:post:/task/complete/{farmId}/{taskId}/{dueDate}/{userId}";
+    public static final String UNCOMPLETE_TASK_GET =
+        "rest:get:/task/uncomplete/{farmId}/{taskId}";
+    public static final String UNCOMPLETE_TASK_POST =
+        "rest:post:/task/uncomplete/{farmId}/{taskId}";
+    public static final String UNCOMPLETE_TASK_POST_2 =
+        "rest:post:/task/uncomplete/{farmId}/{taskId}/{timestamp}/{userId}";
+    public static final String RECOVER_TASK =
+        "rest:get:/task/recover/{farmId}/{taskId}";
+
+    public static final String SHIFT_TASK =
+        "rest:get:/task/shift/{farmId}/{taskId}/{date}/{endDate}/{daysShifted}/{applyToSeries}/{isResize}/{markComplete}";
+    public static final String LIST_TASKS =
+        "rest:get:/task/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String LIST_TASKS_ALL =
+        "rest:get:/task/listall/{farmId}/{lastRefresh}/{compressed}";
+    public static final String LIST_TASK_REFERENCES =
+        "rest:get:/taskreferences/list/{farmId}";
+    public static final String TASKS_OVERDUE_LIST =
+        "rest:get:/task/overdue/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String TASKS_FARM_PLAN =
+        "rest:get:/task/farmplan/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String FILTERED_TASKS = "rest:post:/task/filter/{farmId}";
+    public static final String TASK_ASSIGNED_RESPONSIBILITIES =
+        "rest:get:/task/assigned-responsibilities/{farmId}/{lastRefresh}/{compressed}";
+    // Complete and uncomplete tasks for mobile
+    public static final String UPDATE_TASK =
+        "rest:post:/task/update/{farmId}/{taskId}/{isDelete}/{deleteInstance}/{dueDate}";
+    public static final String FIND_TASK_BYID = "rest:get:/gettask/{taskId}";
+
+    // Tasks for the task screen
+    public static final String LIST_FARM_TASKS_FOR_FILTER =
+        "rest:post:/tasks/farm/list/{farmId}";
+    public static final String LIST_COMPANY_TASKS_FOR_FILTER =
+        "rest:post:/tasks/company/list/{companyId}";
+
+    public static final String ADD_TASK_ORG =
+        "rest:post:/org/task/add/{organisationId}";
+    public static final String DELETE_TASK_ORG =
+        "rest:get:/org/task/delete/{organisationId}/{taskId}";
+
+    public static final String RESEND_ACTIVATION_EMAIL =
+        "rest:post:/admin/user/{userId}/activation";
+    public static final String TOGGLE_3RDPARTY_STATUS =
+        "rest:post:/admin/user/{userId}/toggle";
+    public static final String DELETE_GLOBAL_USER =
+        "rest:post:/admin/user/{userId}/delete";
+
+    public static final String TOGGLE_USER_STATUS =
+        "rest:post:/organisations/{orgId}/users/{userId}/toggle";
+    public static final String TOGGLE_USER_STATUS_GET =
+        "rest:get:/organisations/{orgId}/users/{userId}/toggle";
+    public static final String DELETE_USER =
+        "rest:post:/organisations/{orgId}/users/{userId}/delete";
+    public static final String DELETE_INVITED_3RDPARTY =
+        "rest:post:/organisations/{orgId}/external/{workerId}/delete";
+    public static final String TOGGLE_INVITED_3RDPARTY_STATUS =
+        "rest:post:/organisations/{orgId}/external/{workerId}/toggle";
+    public static final String DELETE_INVITED_FARM_3RDPARTY =
+        "rest:post:/farms/{farmId}/external/{workerId}/delete";
+    public static final String TOGGLE_INVITED_FARM_3RDPARTY_STATUS =
+        "rest:post:/farms/{farmId}/external/{workerId}/toggle";
+
+    public static final String FIND_3RDPARTY =
+        "rest:post:/users/3rdparty/search/{orgId}";
+    public static final String RMPP_DATA = "rest:get:/public/rmpp/getData";
+    public static final String RMPP_AUDIT =
+        "rest:get:/public/rmpp/audit/{timestamp}";
+
+    public static final String SALES_AND_PURCHASE_WIDGET_GET_DATA_GET =
+        "rest:get:/dashboard/salesandpurchase/{farmId}/getData";
+    public static final String SALES_AND_PURCHASE_WIDGET_GET_DATA_POST =
+        "rest:post:/dashboard/salesandpurchase/{farmId}/getData";
+    public static final String SALES_AND_PURCHASE_WIDGET =
+        "rest:post:/dashboard/salesandpurchase/{farmId}/{widgetId}";
+    public static final String COMPANY_GRAZING_WIDGET =
+        "rest:post:/dashboard/company/grazing/{companyId}/{widgetId}";
+    public static final String COMPANY_GRAZING_GET_DATA =
+        "rest:post:/dashboard/company/grazing/widget/{companyId}/getData";
+
+    public static final String COMPANY_GRAZING_RECORDING_WIDGET =
+        "rest:post:/dashboard/company/grazingrecording/{companyId}/{widgetId}";
+    public static final String COMPANY_GRAZING_RECORDING_GET_DATA =
+        "rest:post:/dashboard/company/grazingrecording/widget/{companyId}/getData";
+    public static final String COMPANY_GRAZING_RECORDING_GET_DATA_MAXIMISED =
+        "rest:post:/dashboard/company/grazingrecordingmaximised/widget/{companyId}/getData";
+    public static final String FARM_GRAZING_RECORDING_WIDGET =
+        "rest:post:/dashboard/farm/grazingrecording/{farmId}/{widgetId}";
+    public static final String FARM_GRAZING_RECORDING_GET_DATA =
+        "rest:post:/dashboard/farm/grazingrecording/widget/{farmId}/getData";
+
+    public static final String COMPANY_BCS_WIDGET =
+        "rest:post:/dashboard/company/bcs/{companyId}/{widgetId}";
+    public static final String COMPANY_BCS_GET_DATA =
+        "rest:post:/dashboard/company/bcs/widget/{companyId}/getData";
+    public static final String COMPANY_BCS_GET_DATA_MAXIMISED =
+        "rest:post:/dashboard/company/bcsmaximised/widget/{companyId}/getData";
+    public static final String FARM_BCS_WIDGET =
+        "rest:post:/dashboard/farm/bcs/{farmId}/{widgetId}";
+    public static final String FARM_BCS_GET_DATA =
+        "rest:post:/dashboard/farm/bcs/widget/{farmId}/getData";
+
+    public static final String PASTURE_COVER_WIDGET =
+        "rest:post:/dashboard/pasturecover/{farmId}/{widgetId}";
+    public static final String PASTURE_COVER_GET_DATA =
+        "rest:post:/dashboard/pasturecover/{farmId}/getData";
+
+    public static final String PASTURE_COVER_WIDGET_ORG =
+        "rest:post:/dashboard/pasturecoverorg/{organisationId}/{widgetId}";
+    public static final String PASTURE_COVER_GET_DATA_ORG =
+        "rest:post:/dashboard/pasturecoverorg/{organisationId}/getData";
+
+    public static final String PASTURE_WEDGE_WIDGET_FARM_SAVE =
+        "rest:post:/dashboard/pasturewedge/farm/{farmId}/{widgetId}";
+    public static final String PASTURE_WEDGE_WIDGET_ORG_SAVE =
+        "rest:post:/dashboard/pasturewedge/org/{organisationId}/{widgetId}";
+    public static final String PASTURE_WEDGE_WIDGET_FARM_GET_DATA =
+        "rest:post:/dashboard/pasturewedge/farm/{farmId}/getData";
+    public static final String PASTURE_WEDGE_WIDGET_ORG_GET_DATA =
+        "rest:post:/dashboard/pasturewedge/org/{organisationId}/getData";
+
+    public static final String LIVEWEIGHT_GAIN_WIDGET_FARM_SAVE =
+        "rest:post:/dashboard/liveweightgain/farm/save/{farmId}/{widgetId}";
+    public static final String LIVEWEIGHT_GAIN_WIDGET_ORG_SAVE =
+        "rest:post:/dashboard/liveweightgain/org/save/{organisationId}/{widgetId}";
+    public static final String LIVEWEIGHT_GAIN_WIDGET_FARM_GET_DATA =
+        "rest:post:/dashboard/liveweightgain/farm/getData/{farmId}";
+    public static final String LIVEWEIGHT_GAIN_WIDGET_FARM_GET_DATA_2 =
+        "rest:post:/dashboard/liveweightgain/farm/getData/{farmId}/{widgetId}";
+    public static final String LIVEWEIGHT_GAIN_WIDGET_ORG_GET_DATA =
+        "rest:post:/dashboard/liveweightgain/org/getData/{organisationId}";
+    public static final String LIVEWEIGHT_GAIN_WIDGET_ORG_GET_DATA_2 =
+        "rest:post:/dashboard/liveweightgain/org/getData/{organisationId}/{widgetId}";
+
+    public static final String CONDITION_SCORE_WIDGET =
+        "rest:post:/dashboard/conditionscore/{farmId}/{widgetId}";
+    public static final String CONDITION_SCORE_WIDGET_GET_DATA =
+        "rest:post:/dashboard/conditionscore/{farmId}/{widgetId}/getData";
+
+    public static final String MESSAGES_WIDGET_GET_DATA =
+        "rest:get:/dashboard/messages/{farmId}/list";
+    public static final String GRAZING_CONTRACT_WIDGET_DATA =
+        "rest:get:/dashboard/contract/grazing/{companyId}/getData";
+
+    public static final String RAINFALL_WIDGET_GET_DATA_GET =
+        "rest:get:/dashboard/rainfall/{farmId}/getData";
+    public static final String RAINFALL_WIDGET_GET_DATA_POST =
+        "rest:post:/dashboard/rainfall/{farmId}/getData";
+    public static final String RAINFALL_WIDGET_SAVE_SETTINGS =
+        "rest:post:/dashboard/rainfall/{farmId}/{widgetId}";
+
+    public static final String SET_WEATHER_STATION_COLOUR =
+        "rest:get:/weatherstation/colour/{farmId}/{colour}";
+    public static final String IRRIGATION_WIDGET_GET_DATA_POST =
+        "rest:post:/dashboard/irrigation/{farmId}/getData";
+    public static final String IRRIGATION_WIDGET_GET_DATA_GET =
+        "rest:get:/dashboard/irrigation/{farmId}/getData";
+    public static final String IRRIGATION_WIDGET_SAVE_SETTINGS =
+        "rest:post:/dashboard/irrigation/{farmId}/{widgetId}";
+
+    public static final String HEALTH_AND_SAFETY_WIDGET_GET_DATA_POST =
+        "rest:post:/dashboard/healthandsafety/{farmId}/getData";
+    public static final String HEALTH_AND_SAFETY_WIDGET_GET_DATA_GET =
+        "rest:get:/dashboard/healthandsafety/{farmId}/getData";
+    public static final String HEALTH_AND_SAFETY_SAVE_SETTINGS =
+        "rest:post:/dashboard/healthandsafety/{farmId}/{widgetId}";
+    public static final String INCIDENT_WIDGET_GET_DATA_GET =
+        "rest:get:/dashboard/incident/{farmId}/getData";
+    public static final String INCIDENT_WIDGET_GET_DATA_POST =
+        "rest:post:/dashboard/incident/{farmId}/getData";
+    public static final String INCIDENT_WIDGET_SAVE_SETTINGS =
+        "rest:post:/dashboard/incident/{farmId}/{widgetId}";
+
+    public static final String INCIDENT_WIDGET_GET_DATA_ORG_POST =
+        "rest:post:/dashboard/incidentorg/{organisationId}/getData";
+    public static final String INCIDENT_WIDGET_GET_DATA_ORG_GET =
+        "rest:get:/dashboard/incidentorg/{organisationId}/getData";
+    public static final String INCIDENT_WIDGET_SAVE_SETTINGS_ORG =
+        "rest:post:/dashboard/incidentorg/{organisationId}/{widgetId}";
+
+    public static final String STOCKCOUNT_WIDGET_GET_DATA_GET =
+        "rest:get:/dashboard/stockcount/{farmId}/getData";
+    public static final String STOCKCOUNT_WIDGET_GET_DATA_POST =
+        "rest:post:/dashboard/stockcount/{farmId}/getData";
+    public static final String STOCKCOUNT_WIDGET_SAVE_SETTINGS =
+        "rest:post:/dashboard/stockcount/{farmId}/{widgetId}";
+    public static final String WEIGHTTARGET_WIDGET_GET_DATA_GET =
+        "rest:get:/dashboard/weighttarget/{farmId}/getData";
+    public static final String WEIGHTTARGET_WIDGET_GET_DATA_POST =
+        "rest:post:/dashboard/weighttarget/{farmId}/getData";
+    public static final String WEIGHTTARGET_WIDGET_SAVE_SETTINGS =
+        "rest:post:/dashboard/weighttarget/{farmId}/{widgetId}";
+
+//    public static final String STOCKCOUNT_WIDGET_GET_DATA_ORG =
+//        {"rest:get:/dashboard/stockcountorg/{organisationId}/getData", "rest:post:/dashboard/stockcountorg/{organisationId}/getData"};
+//    public static final String STOCKCOUNT_WIDGET_SAVE_SETTINGS_ORG =
+//        "rest:post:/dashboard/stockcountorg/{organisationId}/{widgetId}";
+
+    public static final String EID_WEIGHTS_AGAINST_TARGET_GET_DATA_ORG_GET =
+        "rest:get:/dashboard/eidweightagainsttarget/org/getData/{organisationId}";
+    public static final String EID_WEIGHTS_AGAINST_TARGET_GET_DATA_ORG_POST =
+        "rest:post:/dashboard/eidweightagainsttarget/org/getData/{organisationId}";
+    public static final String EID_WEIGHTS_AGAINST_TARGET_SAVE_SETTINGS_ORG =
+        "rest:post:/dashboard/eidweightagainsttarget/org/save/{organisationId}/{widgetId}";
+    public static final String EID_WEIGHTS_AGAINST_TARGET_GET_DATA_FARM_GET =
+        "rest:get:/dashboard/eidweightagainsttarget/farm/getData/{organisationId}";
+    public static final String EID_WEIGHTS_AGAINST_TARGET_GET_DATA_FARM_POST =
+        "rest:post:/dashboard/eidweightagainsttarget/farm/getData/{organisationId}";
+    public static final String EID_WEIGHTS_AGAINST_TARGET_SAVE_SETTINGS_FARM =
+        "rest:post:/dashboard/eidweightagainsttarget/farm/save/{organisationId}/{widgetId}";
+
+    public static final String CORRECTIVE_ACTION_WIDGET_GET_DATA_GET =
+        "rest:get:/dashboard/correctiveaction/{farmId}/getData";
+    public static final String CORRECTIVE_ACTION_WIDGET_GET_DATA_POST =
+        "rest:post:/dashboard/correctiveaction/{farmId}/getData";
+    public static final String CORRECTIVE_ACTION_CMP_WIDGET_GET_DATA_GET =
+        "rest:get:/dashboard/correctiveactioncompany/{companyId}/getData";
+    public static final String CORRECTIVE_ACTION_CMP_WIDGET_GET_DATA_POST =
+        "rest:post:/dashboard/correctiveactioncompany/{companyId}/getData";
+    public static final String CORRECTIVE_ACTION_WIDGET =
+        "rest:post:/dashboard/save/correctiveaction/{farmId}/{widgetId}";
+    public static final String JOB_EXECUTION_WIDGET =
+        "rest:post:/dashboard/save/jobexecution/{farmId}/{widgetId}";
+    public static final String DAIRY_MILKING_OVER_TIME_GET_DATA_GET =
+        "rest:get:/dashboard/milkingovertime/{farmId}/getData";
+    public static final String DAIRY_MILKING_OVER_TIME_GET_DATA_POST =
+        "rest:post:/dashboard/milkingovertime/{farmId}/getData";
+    public static final String DAIRY_MILKING_OVER_TIME =
+        "rest:post:/dashboard/milkingovertime/{farmId}/{widgetId}";
+
+    public static final String DAIRY_MILKING_OVER_TIME_GET_DATA_ORG_GET =
+        "rest:get:/dashboardorg/milkingovertimeorg/{organisationId}/getData";
+    public static final String DAIRY_MILKING_OVER_TIME_GET_DATA_ORG_POST =
+        "rest:post:/dashboardorg/milkingovertimeorg/{organisationId}/getData";
+    public static final String DAIRY_MILKING_OVER_TIME_ORG =
+        "rest:post:/dashboard/milkingovertimeorg/{farmId}/{organisationId}";
+
+    public static final String DAIRY_CURRENT_STATUS_GET_DATA_GET =
+        "rest:get:/dashboard/dairycurrentstatus/{farmId}/getData";
+    public static final String DAIRY_CURRENT_STATUS_GET_DATA_POST =
+        "rest:post:/dashboard/dairycurrentstatus/{farmId}/getData";
+    public static final String DAIRY_CURRENT_STATUS =
+        "rest:post:/dashboard/dairycurrentstatus/{farmId}/{widgetId}";
+
+    public static final String DAIRY_MILK_SOLIDS_GET_DATA_PRODUCING_MILK_GET =
+        "rest:get:/dashboard/milkingfor/milksolids/{farmId}/getData";
+    public static final String DAIRY_MILK_SOLIDS_GET_DATA_PRODUCING_MILK_POST =
+        "rest:post:/dashboard/milkingfor/milksolids/{farmId}/getData";
+    public static final String DAIRY_MILK_SOLIDS =
+        "rest:post:/dashboard/milksolids/{farmId}/{widgetId}";
+    public static final String DAIRY_MILK_SOLIDS_GET_DATA_GET =
+        "rest:get:/dashboard/milksolids/{farmId}/getData";
+    public static final String DAIRY_MILK_SOLIDS_GET_DATA_POST =
+        "rest:post:/dashboard/milksolids/{farmId}/getData";
+
+    public static final String DAIRY_MILK_SOLIDS_GET_DATA_PRODUCING_MILK_ORG_GET =
+        "rest:get:/dashboard/milkingfor/milksolidsorg/{organisationId}/getData";
+    public static final String DAIRY_MILK_SOLIDS_GET_DATA_PRODUCING_MILK_ORG_POST =
+        "rest:post:/dashboard/milkingfor/milksolidsorg/{organisationId}/getData";
+    public static final String DAIRY_MILK_SOLIDS_ORG =
+        "rest:post:/dashboard/milksolidsorg/{organisationId}/{widgetId}";
+    public static final String DAIRY_MILK_SOLIDS_GET_DATA_ORG_GET =
+        "rest:get:/dashboardorg/milksolidsorg/{organisationId}/getData";
+    public static final String DAIRY_MILK_SOLIDS_GET_DATA_ORG_POST =
+        "rest:post:/dashboardorg/milksolidsorg/{organisationId}/getData";
+
+    public static final String DAIRY_CALVING_SPREAD_GET_DATA_GET =
+        "rest:get:/dashboard/calvingspread/{farmId}/getData";
+    public static final String DAIRY_CALVING_SPREAD_GET_DATA_POST =
+        "rest:post:/dashboard/calvingspread/{farmId}/getData";
+    public static final String DAIRY_CALVING_SPREAD =
+        "rest:post:/dashboard/calvingspread/{farmId}/{widgetId}";
+
+    public static final String DAIRY_SOMANTIC_CELL_GET_DATA_GET =
+        "rest:get:/dashboard/somanticcell/{farmId}/getData";
+    public static final String DAIRY_SOMANTIC_CELL_GET_DATA_POST =
+        "rest:post:/dashboard/somanticcell/{farmId}/getData";
+    public static final String DAIRY_SOMANTIC_CELL_GET_DATA_COMPANY_GET =
+        "rest:get:/dashboardcompany/somanticcell/{companyId}/getData";
+    public static final String DAIRY_SOMANTIC_CELL_GET_DATA_COMPANY_POST =
+        "rest:post:/dashboardcompany/somanticcell/{companyId}/getData";
+
+    public static final String DAIRY_SOMANTIC_CELL =
+        "rest:post:/dashboard/somanticcell/{farmId}/{widgetId}";
+
+    public static final String DAIRY_SOMANTIC_CELL_ORG =
+        "rest:post:/dashboard/somanticcellorg/{organisationId}/{widgetId}";
+    public static final String DAIRY_SOMANTIC_CELL_GET_DATA_ORG_GET =
+        "rest:get:/dashboardorg/somanticcellorg/{organisationId}/getData";
+    public static final String DAIRY_SOMANTIC_CELL_GET_DATA_ORG_POST =
+        "rest:post:/dashboardorg/somanticcellorg/{organisationId}/getData";
+
+    public static final String MILK_DISPOSAL_GET_DATA_GET =
+        "rest:get:/dashboard/milkdisposal/{farmId}/getData";
+    public static final String MILK_DISPOSAL_GET_DATA_POST =
+        "rest:post:/dashboard/milkdisposal/{farmId}/getData";
+    public static final String MILK_DISPOSAL_GET_DATA_COMPANY_GET =
+        "rest:get:/dasyboardcmp/milkdisposal/{companyId}/getData";
+    public static final String MILK_DISPOSAL_GET_DATA_COMPANY_POST =
+        "rest:post:/dasyboardcmp/milkdisposal/{companyId}/getData";
+    public static final String MILK_DISPOSAL =
+        "rest:post:/dashboard/save/milkdisposal/{farmId}/{widgetId}";
+    public static final String MILK_DISPOSAL_ORG =
+        "rest:post:/dashboardorg/save/milkdisposal/{organisationId}/{widgetId}";
+    public static final String MILK_DISPOSAL_GET_DATA_ORG_GET =
+        "rest:get:/dashboardorg/milkdisposal/{organisationId}/getData";
+    public static final String MILK_DISPOSAL_GET_DATA_ORG_POST =
+        "rest:post:/dashboardorg/milkdisposal/{organisationId}/getData";
+
+    public static final String DAIRY_FEED_GET_DATA_GET =
+        "rest:get:/dashboard/dairyfeed/{farmId}/getData";
+    public static final String DAIRY_FEED_GET_DATA_POST =
+        "rest:post:/dashboard/dairyfeed/{farmId}/getData";
+    public static final String DAIRY_FEED =
+        "rest:post:/dashboard/dairyfeed/{farmId}/{widgetId}";
+
+    public static final String DAIRY_TOTAL_SOLIDS_GET_DATA_GET =
+        "rest:get:/dashboard/totalsolids/{farmId}/getData";
+    public static final String DAIRY_TOTAL_SOLIDS_GET_DATA_POST =
+        "rest:post:/dashboard/totalsolids/{farmId}/getData";
+    public static final String DAIRY_TOTAL_SOLIDS =
+        "rest:post:/dashboard/totalsolids/{farmId}/{widgetId}";
+
+    public static final String DAIRY_TOTAL_SOLID_ORG =
+        "rest:post:/dashboard/totalsolidsorg/{organisationId}/{widgetId}";
+    public static final String DAIRY_TOTAL_SOLIDS_GET_DATA_ORG_GET =
+        "rest:get:/dashboardorg/totalsolidsorg/{organisationId}/getData";
+    public static final String DAIRY_TOTAL_SOLIDS_GET_DATA_ORG_POST =
+        "rest:post:/dashboardorg/totalsolidsorg/{organisationId}/getData";
+
+    public static final String DAIRY_FEED_VS_MILK_GET_DATA_GET =
+        "rest:get:/dashboard/feedvsmilk/{farmId}/getData";
+    public static final String DAIRY_FEED_VS_MILK_GET_DATA_POST =
+        "rest:post:/dashboard/feedvsmilk/{farmId}/getData";
+    public static final String DAIRY_FEED_VS_MILK =
+        "rest:post:/dashboard/feedvsmilk/{farmId}/{widgetId}";
+
+    public static final String SOIL_MOISTURE_GET_DATA_GET =
+        "rest:get:/dashboard/soilmoisture/{farmId}/getData";
+    public static final String SOIL_MOISTURE_GET_DATA_POST =
+        "rest:post:/dashboard/soilmoisture/{farmId}/getData";
+    public static final String SOIL_MOISTURE =
+        "rest:post:/dashboard/soilmoisture/{farmId}/{widgetId}";
+
+    public static final String SOIL_TEMPERATURE_GET_DATA_GET =
+        "rest:get:/dashboard/soiltemperature/{farmId}/getData";
+    public static final String SOIL_TEMPERATURE_GET_DATA_POST =
+        "rest:post:/dashboard/soiltemperature/{farmId}/getData";
+    public static final String SOIL_TEMPERATURE =
+        "rest:post:/dashboard/soiltemperature/{farmId}/{widgetId}";
+
+    public static final String TEMPERATURE_GET_DATA_GET =
+        "rest:get:/dashboard/temperature/{farmId}/getData";
+    public static final String TEMPERATURE_GET_DATA_POST =
+        "rest:post:/dashboard/temperature/{farmId}/getData";
+    public static final String TEMPERATURE =
+        "rest:post:/dashboard/temperature/{farmId}/{widgetId}";
+
+    public static final String DAIRY_FEED_GET_DATA_COMPANY_GET =
+        "rest:get:/dashboardcompany/dairyfeed/{companyId}/getData";
+    public static final String DAIRY_FEED_GET_DATA_COMPANY_POST =
+        "rest:post:/dashboardcompany/dairyfeed/{companyId}/getData";
+    public static final String DAIRY_TOTAL_SOLIDS_GET_DATA_COMPANY_GET =
+        "rest:get:/dashboardcompany/totalsolids/{companyId}/getData";
+    public static final String DAIRY_TOTAL_SOLIDS_GET_DATA_COMPANY_POST =
+        "rest:post:/dashboardcompany/totalsolids/{companyId}/getData";
+    public static final String DAIRY_CURRENT_STATUS_GET_DATA_COMPANY_GET =
+        "rest:get:/dashboardcompany/dairycurrentstatus/{companyId}/getData";
+    public static final String DAIRY_CURRENT_STATUS_GET_DATA_COMPANY_POST =
+        "rest:post:/dashboardcompany/dairycurrentstatus/{companyId}/getData";
+    public static final String DAIRY_MILKING_OVER_TIME_GET_DATA_COMPANY_GET =
+        "rest:get:/dashboardcompany/milkingovertime/{companyId}/getData";
+    public static final String DAIRY_MILKING_OVER_TIME_GET_DATA_COMPANY_POST =
+        "rest:post:/dashboardcompany/milkingovertime/{companyId}/getData";
+    public static final String DAIRY_MILK_SOLIDS_GET_DATA_COMPANY_GET =
+        "rest:get:/dashboardcompany/milksolids/{companyId}/getData";
+    public static final String DAIRY_MILK_SOLIDS_GET_DATA_COMPANY_POST =
+        "rest:post:/dashboardcompany/milksolids/{companyId}/getData";
+    public static final String DAIRY_MILK_SOLIDS_GET_DATA_PRODUCING_MILK_COMPANY_GET =
+        "rest:get:/dashboardcompany/milkingfor/milksolids/{companyId}/getData";
+    public static final String DAIRY_MILK_SOLIDS_GET_DATA_PRODUCING_MILK_COMPANY_POST =
+        "rest:post:/dashboardcompany/milkingfor/milksolids/{companyId}/getData";
+
+    public static final String DAIRY_CURRENT_STATUS_GET_DATA_ORGANISATION_GET =
+        "rest:get:/dashboardorg/dairycurrentstatusorg/{organisationId}/getData";
+    public static final String DAIRY_CURRENT_STATUS_GET_DATA_ORGANISATION_POST =
+        "rest:post:/dashboardorg/dairycurrentstatusorg/{organisationId}/getData";
+
+    public static final String DAIRY_FEED_GET_DATA_ORG_GET =
+        "rest:get:/dashboardorg/dairyfeedorg/{organisationId}/getData";
+    public static final String DAIRY_FEED_GET_DATA_ORG_POST =
+        "rest:post:/dashboardorg/dairyfeedorg/{organisationId}/getData";
+    public static final String DAIRY_FEED_ORG =
+        "rest:post:/dashboard/dairyfeedorg/{organisationId}/{widgetId}";
+
+    public static final String REPRODUCTION_WIDGET_GET_DATA_GET =
+        "rest:get:/dashboard/reproduction/{farmId}/getData";
+    public static final String REPRODUCTION_WIDGET_GET_DATA_POST =
+        "rest:post:/dashboard/reproduction/{farmId}/getData";
+    public static final String REPRODUCTION_WIDGET_SAVE =
+        "rest:post:/dashboard/reproduction/{farmId}/{widgetId}";
+
+    public static final String BEEFEQ_WIDGET_GET_DATA_GET =
+        "rest:get:/dashboard/beefeq/{farmId}/getData";
+    public static final String BEEFEQ_WIDGET_GET_DATA_POST =
+        "rest:post:/dashboard/beefeq/{farmId}/getData";
+    public static final String BEEFEQ_WIDGET_SAVE_SETTINGS =
+        "rest:post:/dashboard/beefeq/{farmId}/{widgetId}";
+
+    public static final String FARM_WALK_SUBMIT =
+        "rest:post:/farmwalk/submit/{farmId}";
+    public static final String SOIL_TYPES_SUBMIT =
+        "rest:post:/soiltypes/submit/{farmId}";
+    public static final String FARM_WALK_DELETE =
+        "rest:get:/farmwalk/delete/{farmId}/{farmWalkId}";
+    public static final String LIST_FARM_WALKS =
+        "rest:get:/farmwalks/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String LIST_ACTIVITIES_FOR_DATE =
+        "rest:get:/landactivties/harvesting/list/{farmId}/{theDate}/{currentEvent}";
+
+    public static final String DIARY_FILTER_GET =
+        "rest:get:/diary/filter/get/{farmId}";
+    public static final String DIARY_FILTER_SAVE = "rest:post:/diary/filter/save";
+    public static final String DIARY_FILTER_CLEAR =
+        "rest:get:/diary/filter/clear/{farmId}";
+
+    public static final String RELEASE_HERD_TEST =
+        "rest:get:/herdtest/release/{farmId}/{herdTestId}";
+    public static final String STOCKREC_FILTER_SAVE =
+        "rest:post:/stockrec/filter";
+    public static final String STOCKREC_REPORT_FILTER_SAVE =
+        "rest:post:/stockrec/reportfilter";
+
+    // Farm management company services
+    public static final String COMPANIES_LIST =
+        "rest:get:/companies/list/{lastRefresh}/{compressed}";
+    public static final String GET_COMPANY =
+        "rest:get:/companies/view/{companyId}";
+
+    public static final String TOGGLE_COMPANY_NOTIFICATIONS =
+        "rest:get:/companies/notifications/toggle/{companyId}/{agreementId}";
+    public static final String ADD_EMAIL_NOTIFICATION =
+        "rest:get:/companies/notifications/add/{companyId}/{agreementId}/{userId}/{email}";
+    public static final String REMOVE_EMAIL_NOTIFICATION =
+        "rest:get:/companies/notifications/remove/{companyId}/{agreementId}/{notifierId}";
+
+    public static final String APPROVE_FARM =
+        "rest:get:/companies/manage/farm/{companyId}/{farmId}/approve";
+    public static final String REJECT_FARM =
+        "rest:get:/companies/manage/farm/{companyId}/{farmId}/reject";
+
+    // internal rest services for health and safety
+    public static final String VISIT_TXN_SUBMIT =
+        "rest:post:/heathandsafety/visit/submit/{JMSXGroupID}";
+    public static final String INCIDENT_TXN_SUBMIT =
+        "rest:post:/heathandsafety/incident/submit/{JMSXGroupID}";
+    public static final String INCIDENT_GET_OTHER_STAFF =
+        "rest:get:/heathandsafety/incident/otherstaff/list/{farmId}/{incidentDate}";
+
+    public static final String SEND_TO_ASSURA =
+        "rest:get:/heathandsafety/incident/send/assura/{farmId}/{incidentId}";
+    public static final String HAZARD_TXN_SUBMIT =
+        "rest:post:/heathandsafety/hazard/submit/{JMSXGroupID}";
+    public static final String HAZARD_SAVE_SUBMIT =
+        "rest:post:/heathandsafety/hazard/save/submit/";
+    public static final String OPEN_VISITS_LIST =
+        "rest:get:/openvisits/list/{farmId}";
+    public static final String OPEN_VISITS_LIST_2 =
+        "rest:get:/openvisits/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String INCIDENT_GET_NOTIFIERS =
+        "rest:get:/heathandsafety/incident/notifiers/list/{businessUnitId}";
+    public static final String INCIDENT_SAVE_NOTIFIERS =
+        "rest:post:/heathandsafety/incident/notifiers/save/{businessUnitId}";
+    public static final String HEATH_AND_SAFETY_PROCESSING = "direct:animal/chained/processing";
+
+    public static final String RECORD_TIMESHEET_TIME =
+        "rest:post:/timesheets/submit/{farmId}/{JMSXGroupID}";
+    public static final String LIST_TIMESHEET_SINCE =
+        "rest:get:/timesheets/list/{farmId}/{theDate}";
+    public static final String LIST_TIMESHEET_TASKS_SINCE =
+        "rest:get:/timesheets/tasks/list/{farmId}/{theDate}";
+    public static final String ADD_TIMESHEET_TASK =
+        "rest:post:/timesheets/task/add/{farmId}";
+
+    public static final String LIST_TIMESHEET_TASKS_SINCE_2 =
+        "rest:get:/timesheets/tasks/list/{farmId}/{theDate}/{nocompress}";
+
+    // Get list of Timesheet task from organisation
+    public static final String TIMESHEET_TASK_LIST =
+        "rest:get:/timesheets/timesheettasks/{organisationId}";
+    // Get Timesheet for mobile
+    public static final String TEMPLATE_TASK_LIST = "rest:get:/task/templates/{farmId}";
+    public static final String TEMPLATE_TASK_LIST_COMPRESSED =
+        "rest:get:/task/templates/{farmId}/{lastRefresh}/{compressed}";
+
+    public static final String TEMPLATE_TASK_LIST_COMPANY =
+        "rest:get:/task/templatescompany/{companyId}";
+    public static final String FARM_PLAN_LIST =
+        "rest:get:/farmplan/list/{farmId}";
+
+    public static final String MOBILE_FARM_PLAN_LIST =
+        "rest:get:/farmplan/mobile/list/{farmId}";
+
+    public static final String MOBILE_FARM_PLAN_LIST_2 =
+        "rest:get:/farmplan/mobile/list/{farmId}/{lastRefresh}/{compressed}";
+
+    public static final String FARM_PLAN_SAVE =
+        "rest:post:/farmplan/save/farm/{mode}/{businessUnitId}";
+    public static final String COMPANY_PLAN_SAVE =
+        "rest:post:/farmplan/save/company/{businessUnitId}";
+    public static final String ORG_PLAN_SAVE =
+        "rest:post:/farmplan/save/organisation/{organisationId}";
+    public static final String GLOBAL_PLAN_SAVE =
+        "rest:post:/farmplan/save/global";
+
+    public static final String TIMESHEET_MOBILE =
+        "rest:get:/timesheets/timesheetmobile/{farmId}/{lastRefresh}/{compressed}";
+
+    public static final String SUBMIT_TIMESHEET_MOBILE =
+        "rest:post:/timesheets/submitstatus/{farmId}/{userId}";
+
+    public static final String LIST_OBSERVATION_POINTS_SINCE =
+        "rest:get:/assessmentSites/list/{farmId}/{lastRefresh}/{compressed}";
+    public static final String LIST_EMERGENCY_PLANS =
+        "rest:get:/emergencyPlans/list/{farmId}/{lastRefresh}/{compressed}";
+
+    public static final String LIST_INCIDENT_LOCATIONS_SINCE =
+        "rest:get:/incidentLocations/list/{farmId}";
+    public static final String LIST_INCIDENT_LOCATIONS_SINCE_COMPRESSED =
+        "rest:get:/incidentLocations/list/{farmId}/{lastRefresh}/{compressed}";
+
+    public static final String AGRIVISIT_CHECK_CHANGES_ON_SIGNIN =
+        "rest:get:/visitors/farm/check/changes/{farmId}";
+    public static final String AGRIVISIT_NOTIFICATIONS_LIST =
+        "rest:post:/visitors/checkForUpdates";
+    public static final String AGRIVISIT_GET_FARM_DETAILS =
+        "rest:get:/visitors/get/farm/{farmId}";
+    public static final String AGRIVISIT_DOWNLOADED_FARM_DETAILS =
+        "rest:get:/visitors/download/farm/details/{farmId}";
+    public static final String FARMS_SEARCH_VISITORS_LATLNG =
+        "rest:get:/visitors/farms/search/closest/{latitude}/{longitude}";
+    public static final String FARMS_SEARCH_VISITORS_LATLNG_REGION =
+        "rest:get:/visitors/insecure/farms/search/closest/{latitude}/{longitude}/{regionId}";
+    public static final String FARMS_SEARCH_VISITORS_REGION =
+        "rest:get:/visitors/insecure/farms/search/region/{regionId}";
+    public static final String FARMS_SEARCH_VISITORS_REGION_SEARCH =
+        "rest:get:/visitors/insecure/farms/search/region/{regionId}/{searchTerm}";
+    public static final String FARMS_SEARCH_VISITORS_KEY =
+        "rest:get:/visitors/insecure/farms/search/{farmKey}";
+    public static final String FARMS_INDUCTION_QUESTIONS =
+        "rest:get:/visitors/secure/farms/questions/{farmId}";
+    public static final String FARMS_REQUEST_VISITOR_DATA_DOWNLOAD =
+        "rest:get:/visitors/secure/visit/data/download/request/{farmId}";
+    public static final String FARMS_REQUESTS_FOR_VISITOR_DATA_DOWNLOAD =
+        "rest:get:/visitors/secure/visit/data/download/requests";
+    public static final String SAFE_VISIT_CHECK_SHUTDOWN_PERIOD =
+        "rest:get:/visitors/secure/visit/check/shutdown/{farmId}/{visitStart}/{visitEnd}";
+
+    public static final String SAFE_VISIT_ADD_FAVOURITE_FARM =
+        "rest:post:/visitors/secure/add/favourite/farm";
+    public static final String SAFE_VISIT_REMOVE_FAVOURITE_FARM =
+        "rest:post:/visitors/secure/remove/favourite/farm";
+    public static final String SAFE_VISIT_LIST_FAVOURITE_FARMS =
+        "rest:get:/visitors/secure/list/favourite/farms";
+    public static final String SAFE_VISIT_ADD_FAVOURITE_SITE =
+        "rest:post:/visitors/secure/add/favourite/site";
+    public static final String SAFE_VISIT_REMOVE_FAVOURITE_SITE =
+        "rest:post:/visitors/secure/remove/favourite/site";
+    public static final String SAFE_VISIT_LIST_FAVOURITE_SITES =
+        "rest:get:/visitors/secure/list/favourite/sites";
+
+    public static final String FARMS_SEARCH_VISITORS_CURRENT =
+        "rest:get:/visitors/secure/currentUser";
+    public static final String FARMS_VISITOR_REGISTER =
+        "rest:post:/visitors/insecure/registerVisitor";
+    public static final String FARMS_VISITOR_RESET_PASSWORD =
+        "rest:get:/visitors/insecure/resetPassword/{username}";
+    public static final String FARMS_VISIT_REQUEST =
+        "rest:post:/visitors/secure/visit/request";
+    public static final String NEW_SITE_VISIT_REQUEST =
+        "rest:post:/visitors/secure/new/site/visit/request";
+    public static final String FARMS_VISIT_SIGN_IN =
+        "rest:post:/visitors/secure/visit/signin";
+    public static final String FARMS_VISIT_SIGN_OUT =
+        "rest:post:/visitors/secure/visit/signout";
+    public static final String FARMS_VISIT_FIND =
+        "rest:get:/visitors/secure/visit/findAll";
+    public static final String FARMS_VISIT_FIND_SINGLE =
+        "rest:get:/visitors/secure/visit/single/{eventId}";
+
+    public static final String FARMS_VISIT_FIND_HISTORIC =
+        "rest:get:/visitors/secure/visit/findHistoric/{startDate}/{endDate}";
+    public static final String FARMS_VISIT_UPCOMING =
+        "rest:get:/visitors/secure/visit/findUpcoming";
+    public static final String FARMS_VISIT_DOCS_FOR_APPROVE =
+        "rest:get:/visitors/secure/visit/docs/{farmId}/approve";
+    public static final String FARMS_VISIT_DOCS_FOR_ALL =
+        "rest:get:/visitors/secure/visit/docs/{farmId}/all";
+    public static final String FARMS_VISIT_FIND_FARM =
+        "rest:get:/visitors/secure/visit/find/{farmId}";
+    public static final String FARMS_VISIT_DETAILS =
+        "rest:get:/visitors/secure/visit/details/{visitId}";
+    public static final String FARMS_VISIT_DETAILS_ON =
+        "rest:get:/visitors/secure/visit/notify/{visitId}/on";
+    public static final String FARMS_VISIT_DETAILS_OFF =
+        "rest:get:/visitors/secure/visit/notify/{visitId}/off";
+    public static final String FARMS_VISIT_INFO =
+        "rest:get:/visitors/secure/visit/info/{visitId}";
+    public static final String FARMS_VISIT_SEND_MESSAGE =
+        "rest:post:/visitors/secure/visit/sendmessage/{visitId}";
+    public static final String FARMS_VISIT_CANCEL =
+        "rest:post:/visits/cancel/{farmId}{visitId}";
+
+    public static final String TEST_STUDENT_DATA =
+        "rest:get:/test/student/data/{farmId}";
+
+    public static final String REST_LOGIN_VISITOR = "rest:get:/login/visitors";
+    public static final String REST_LOGIN_VISITOR_POST = "rest:post:/login/visitors";
+    public static final String GET_SAFEVISIT_USER = "rest:get:/safevisit/user";
+    public static final String POST_SAFEVISIT_USER = "rest:post:/safevisit/user";
+
+    public static final String[] REST_LOGIN_VISITOR_FB =
+        { "rest:get:/fblogin/visitors", "rest:post:/fblogin/visitors" };
+    public static final String REST_LOGIN_FB = "rest:get:/fblogin";
+    public static final String REST_LOGIN_FB_POST = "rest:post:/fblogin";
+
+    public static final String REST_LOGIN_VISITOR_OPTIONS =
+        "rest:options:/login/visitors";
+
+    public static final String CHECK_EMAIL =
+        "rest:get:/visitors/insecure/emailinuse/{email}";
+    public static final String FARMS_VISIT_STATUS =
+        "rest:get:/visitors/secure/visit/status";
+    public static final String FARMS_VISIT_STATUS_SINCE =
+        "rest:get:/visitors/secure/visit/status/{since}";
+    public static final String FARMS_VISIT_STATUS_SINCE_GPS =
+        "rest:get:/visitors/secure/visit/status/{since}/{lat}/{lng}";
+
+    public static final String FARMS_VISITOR_UPDATE =
+        "rest:post:/visitors/secure/updateVisitor";
+    public static final String FARMS_VISITOR_UPDATE_EMAIL_PREFERENCES =
+        "rest:get:/visitors/secure/updateVisitorEmailPreferences/{useEmail}";
+
+    public static final String COUNTRY_BREEDS = "rest:get:/breeds/{country}";
+
+    public static final String DEFAULT_PADDOCK_AND_MOB =
+        "rest:get:/defaultFarm/{farmId}";
+
+    public static final String ORG_MILK_RECORD =
+        "rest:post:/org/milk/record/{organisationId}";
+    public static final String ORG_MILK_GET =
+        "rest:get:/org/milk/get/{organisationId}/{date}";
+    public static final String ORG_MILK_GET_RANGE =
+        "rest:get:/org/milk/get/{organisationId}/{fromDate}/{toDate}/{selectionType}";
+    public static final String FARM_MILK_GET =
+        "rest:get:/farm/milk/get/{farmId}/{date}";
+    public static final String FARM_MILK_GET_RANGE =
+        "rest:get:/farm/milk/get/{farmId}/{fromDate}/{toDate}";
+    public static final String FARM_MILK_RECORDED_RANGE =
+        "rest:get:/farm/milk/recorded/{farmId}/{fromDate}/{toDate}";
+    public static final String FARM_MILK_RECORDED_RANGE_FOR_TYPE =
+        "rest:get:/farm/milk/recorded/{farmId}/{fromDate}/{toDate}/{type}";
+    public static final String FARM_FEED_GET_RANGE =
+        "rest:get:/farm/feed/get/{farmId}/{fromDate}/{toDate}";
+    public static final String FARM_BENCHMARKS =
+        "rest:get:/farm/milk/benchmarks/{farmId}/{fromDate}/{toDate}";
+    public static final String ORG_BENCHMARKS =
+        "rest:get:/organisation/milk/benchmarks/{organisationId}";
+
+    public static final String COMPANY_MILK_RECORD =
+        "rest:post:/company/milk/record/{companyId}";
+    public static final String COMPANY_MILK_GET =
+        "rest:get:/company/milk/get/{companyId}/{date}";
+    public static final String COMPANY_MILK_GET_RANGE =
+        "rest:get:/company/milk/get/{companyId}/{fromDate}/{toDate}";
+    public static final String COMPANY_BENCHMARKS =
+        "rest:get:/company/milk/benchmarks/{companyId}";
+    public static final String GET_ANIMAL_REP_SUMMARY_COMPANY =
+        "rest:get:/company/animal/reproduction/summary/{companyId}";
+
+    public static final String FARM_MOBILE_DIARY =
+        "rest:get:/farm/simple/diary/{farmId}/{fromDate}/{toDate}";
+
+    public static final String GET_ANIMAL_EVENT =
+        "rest:get:/farm/animal/event/{farmId}/{animalEventId}";
+    public static final String GET_ANIMAL_PRODUCE_EVENT =
+        "rest:get:/farm/animalproduce/event/{farmId}/{animalEventId}";
+    public static final String GET_ANIMAL_DISPOSAL_EVENT =
+        "rest:get:/farm/animaldisposal/event/{farmId}/{animalEventId}";
+    public static final String DELETE_ANIMAL_DISPOSAL_EVENT =
+        "rest:get:/farm/delete/animaldisposal/event/{farmId}/{animalEventId}";
+
+    public static final String DELETE_ANIMAL_EVENT =
+        "rest:get:/farm/animal/event/delete/{farmId}/{animalEventId}";
+
+    public static final String DELETE_ANIMAL_PRODUCE_EVENT =
+        "rest:get:/farm/animal/produceevent/delete/{farmId}/{animalEventId}";
+
+    public static final String SAVE_PRODUCE_DISPOSAL =
+        "rest:post:/farm/produce/dispose/{farmId}/save";
+
+    public static final String GET_ANIMAL_REP_SUMMARY_FARM =
+        "rest:get:/farm/animal/reproduction/summary/{farmId}";
+
+    public static final String GET_ANIMAL_REP_SUMMARY_ORG =
+        "rest:get:/organisation/animal/reproduction/summary/{organisationId}";
+
+    public static final String FARM_WATERSUPPLY_RECORD =
+        "rest:post:/farm/watersupply/record/{farmId}";
+    public static final String FARM_WATERSUPPLY_GET =
+        "rest:get:/farm/watersupply/get/{farmId}/{fromDate}/{toDate}";
+
+    public static final String FARM_CREATION_LK =
+        "rest:post:/farm/create/lk/{organisationId}";
+
+    public static final String SET_STAFF_WORKS_SCHEDULE =
+        "rest:post:/staff/schedule/{farmId}";
+    public static final String FORGOT_PASSWORD =
+        "rest:post:/user/insecure/password/forgot";
+    public static final String USER_PASSWORD_CHANGE =
+        "rest:post:/user/password/reset";
+    public static final String FORGOT_VALIDATE_REQUEST =
+        "rest:post:/user/insecure/password/validate";
+    public static final String USER_PASSWORD_RESET =
+        "rest:post:/user/insecure/password/reset";
+    public static final String SET_CURRENT_FARM =
+        "rest:get:/user/farm/set/{farmId}";
+    public static final String FARMS_VISIT_DETAILS_CANCEL =
+        "rest:post:/visitors/secure/visit/cancel";
+    public static final String FARMS_VISIT_DETAILS_INDUCTION =
+        "rest:post:/visitors/secure/visit/induction";
+    public static final String FARMS_VISIT_CHANGE_STATUS_FARMER =
+        "rest:post:/visits/changestatus/{farmId}/{visitId}";
+    public static final String FARMS_VISIT_CHANGE_STATUS_FARMER_2 =
+        "rest:post:/visits/changestatus/{farmId}/{visitId}/{name}";
+    public static final String FARMS_VISIT_DETAILS_ADD_MESSAGE =
+        "rest:post:/visitors/secure/visit/notify/{visitId}/message";
+    public static final String FARMS_VISIT_DETAILS_RESCHEDULE =
+        "rest:post:/visitors/secure/reschedule";
+    public static final String FARMS_VISIT_DETAILS_EXTEND =
+        "rest:post:/visitors/secure/extend";
+
+    public static final String SAFE_VISIT_SAVE_MESSAGE =
+        "rest:post:/visitors/secure/save/message/{farmId}/{visitId}/{JMSXGroupID}";
+    public static final String SAFE_VISIT_MARK_AS_READ =
+        "rest:post:/visitors/secure/mark/read/{farmId}/{visitId}/{date}";
+
+    public static final String VISITOR_FARM_TEXT_SEARCH =
+        "rest:get:/visitors/secure/search/farm/{searchCriteria}";
+
+    public static final String SET_ANIMAL_STATUS =
+        "rest:get:/farm/animal/{farmId}/setstatus/{animalId}/{status}";
+
+    public static final String ORG_HIERACY = "rest:get:/user/org/hierachy";
+
+    public static final String ALL_FARMS_ORG =
+        "rest:get:/farms/org/all/{organisationId}";
+    public static final String ALL_USER_ORG =
+        "rest:get:/user/org/all/{organisationId}";
+
+    public static final String ALL_USER_ORG_HOME =
+        "rest:get:/user/org/home/{organisationId}";
+    public static final String MANAGE_USER_SL =
+        "rest:post:/user/create/lk/{organisationId}";
+    public static final String GIRTH_TO_WEIGHTS =
+        "rest:get:/data/girthsToWeights";
+    public static final String FARM_EXISTS_FARMKEY =
+        "rest:get:/farm/exists/{farmKey}";
+
+    public static final String ORG_EXISTS_CODE = "rest:get:/org/exists/{code}";
+    public static final String ORG_CREATION_LK =
+        "rest:post:/org/create/lk/{organisationId}";
+
+    public static final String FARM_ACTIVATE_DEACTIVATE =
+        "rest:get:/farm/status/{organisationId}/{activate}/{farmId}";
+
+    public static final String APPROVE_ACCOUNT =
+        "rest:post:/user/insecure/approveaccount";
+    public static final String CHECK_USERNAME =
+        "rest:get:/user/check/usernameinuse/{username}";
+    public static final String EVICT_CACHE =
+        "rest:get:/user/evict/cache/{usedId}";
+    public static final String GET_ACTIONS_REQUIRED =
+        "rest:get:/user/actionsrequired";
+    public static final String POST_ACTIONS_REQUIRED =
+        "rest:post:/user/actionsrequired/update";
+
+    public static final String COMPANY_TOGGLE_USER_STATUS_GET =
+        "rest:get:/companies/{companyId}/users/{userId}/toggle";
+    public static final String ALL_USER_COMPANY =
+        "rest:get:/user/company/all/{companyId}";
+    public static final String COMPANY_MANAGE_USER_SL =
+        "rest:post:/companyuser/create/lk/{companyId}";
+
+    public static final String FARM_TOGGLE_USER_STATUS_GET =
+        "rest:get:/farms/{farmId}/users/{userId}/toggle";
+    public static final String ALL_USER_FARM = "rest:get:/user/farm/all/{farmId}";
+    public static final String CHANGE_VID =
+        "rest:post:/animal/vid/all/change/{farmId}/{animalId}";
+    public static final String CHANGE_PREG =
+        "rest:post:/animal/change/numpreg/{farmId}/{animalId}";
+    public static final String FARM_MANAGE_USER_SL =
+        "rest:post:/farmuser/create/lk/{farmId}";
+
+    public static final String REPRODUCTION_INFO_FARM =
+        "rest:get:/reproduction/info/farm/{farmId}";
+    public static final String REPRODUCTION_INFO_ORG_VISITS =
+        "rest:get:/reproduction/info/org/{organisationId}";
+    public static final String REPRODUCTION_INFO_ORG =
+        "rest:get:/reproduction/info/org/{organisationId}/{purpose}";
+    public static final String REPRODUCTION_INFO_FARM_ANIMAL =
+        "rest:get:/reproduction/info/farm/{farmId}/{animalId}";
+
+    public static final String GRAZING_FEED_TYPES =
+        "rest:get:/grazing/feedtypes/country/{country}";
+    public static final String DISEASES =
+        "rest:get:/animal/diseases/country/{country}";
+    public static final String DISEASES_FARM = "rest:get:/animal/diseases/farm/{farmId}";
+    public static final String DISEASES_FARM_COMPRESSED =
+        "rest:get:/animal/diseases/farm/{farmId}/{lastRefresh}/{compressed}";
+    public static final String DISEASE_TYPES = "rest:get:/animal/diseases/types";
+
+    public static final String FARMS_WITHIN_DISTANCE =
+        "rest:get:/farms/within/distance/{latitude}/{longitude}/{distance}";
+    public static final String TARGETS_FOR_COUNTRY =
+        "rest:get:/weighttarget/country/{country}";
+    public static final String TARGETS_FOR_COUNTRY_AND_BREED =
+        "rest:get:/weighttarget/country/{country}/{breedId}";
+
+    public static final String ALL_ANIMALS_BEEN_ON_FARM =
+        "rest:get:/all/historic/animals/{businessUnitId}";
+
+    public static final String MOVEMENT_RECORDS_FOR_EVENT =
+        "rest:get:/all/movement/records/event/{businessUnitId}/{animalEventId}";
+
+    public static final String LAST_SEEN_FOR_ORG =
+        "rest:get:/farms/last/seen/{organisationId}/{when}";
+    public static final String AI_REPORT_ORG =
+        "rest:get:/animal/ai/report/{organisationId}/{from}/{to}";
+
+    public static final String GET_EQUIPMENT_FOR_COUNTRY =
+        "rest:get:/equipment/country/{country}";
+    public static final String ALL_FARMS_VET_VISIT_ORG =
+        "rest:get:/farms/org/vet/all/{organisationId}";
+    public static final String ADD_VET_VISIT_PLAN =
+        "rest:post:/visits/vetvisitplan/add/{organisationId}";
+    public static final String GET_VET_VISIT_PLAN_FOR_DATE =
+        "rest:get:/visits/vetvisitplan/get/{organisationId}/{visitDate}";
+    public static final String GET_ALL_VET_VISIT_PLANS =
+        "rest:get:/visits/all/get/{organisationId}";
+    public static final String GET_ALL_VET_VISIT_PLANS_BETWEEN_DATES =
+        "rest:get:/visits/get/all/{organisationid}/between/{startDate}/{endDate}";
+    public static final String DELETE_VET_VISIT =
+        "rest:get:/visits/{organisationid}/delete/{visitId}";
+
+    public static final String GET_FARM_FOR_PREFIX =
+        "rest:get:/farm/prefix/{country}/{prefix}";
+    public static final String GET_FARMS_FOR_PREFIX =
+        "rest:get:/farms/prefix/{country}/{prefix}";
+
+    // RMPP
+    public static final String CREATE_USER_RMPP = "rest:post:/rmpp/createUser";
+    public static final String GET_REGIONS_RMPP =
+        "rest:get:/rmpp/calculator/getRegions";
+    public static final String GET_FARM_CLASSES_RMPP =
+        "rest:get:/rmpp/calculator/getFarmClasses";
+    public static final String GET_PROCESSORS_RMPP =
+        "rest:get:/rmpp/calculator/getProcessor";
+    public static final String GET_PROCESSORS_RMPP_2 =
+        "rest:get:/rmpp/calculator/getProcessors";
+    public static final String GET_ANIMAL_CLASSES_RMPP =
+        "rest:get:/rmpp/calculator/getAnimalClasses";
+    public static final String GET_FARM_RMPP =
+        "rest:get:/rmpp/calculator/getFarm";
+    public static final String CREATE_FARM_RMPP =
+        "rest:post:/rmpp/calculator/createFarm";
+
+    public static final String UPDATE_FARM_RMPP =
+        "rest:post:/rmpp/calculator/updateFarm";
+    public static final String SAVE_KILLSHEET_RMPP =
+        "rest:post:/rmpp/calculator/saveKillsheet";
+    public static final String DELETE_KILLSHEET_RMPP =
+        "rest:get:/rmpp/calculator/deleteKillsheet/{killsheetId}";
+
+    public static final String GET_RMPP_KILLSHEETS =
+        "rest:get:/rmpp/calculator/getKillsheets/{season}";
+
+    public static final String GET_RMPP_KGHA =
+        "rest:get:/rmpp/calculator/getKGHa/{season}/{seasonType}";
+    public static final String GET_RMPP_LW_GAIN =
+        "rest:get:/rmpp/calculator/getLWGain/{season}";
+    public static final String GET_RMPP_LW_GAIN_2 =
+        "rest:get:/rmpp/calculator/getLWGain/{season}/{seasonType}";
+    public static final String GET_RMPP_MATINGS =
+        "rest:get:/rmpp/calculator/getMatings/{season}";
+    public static final String GET_RMPP_MATINGS_BIRTH =
+        "rest:get:/rmpp/calculator/getMatingsForBithSeason/{season}";
+    public static final String SAVE_MATING_RMPP =
+        "rest:post:/rmpp/calculator/saveMating";
+    public static final String DELETE_MATING_RMPP =
+        "rest:get:/rmpp/calculator/deleteMating/{matingId}";
+
+    public static final String GET_RMPP_PRODUCE =
+        "rest:get:/rmpp/calculator/getProduce/{season}";
+    public static final String SAVE_PRODUCE_RMPP =
+        "rest:post:/rmpp/calculator/saveProduce";
+    public static final String DELETE_PRODUCE_RMPP =
+        "rest:get:/rmpp/calculator/deleteProduce/{produceId}";
+
+    public static final String RMPP_DATA_LINKER =
+        "rest:get:/rmpp/calculator/dataLinkerProviders";
+    public static final String RMPP_DATA_LINKER_REDIRECTION =
+        "rest:get:/rmpp/calculator/dataLinkerRedirection/{publicId}";
+
+    // FARMIQ-13119 - mobile maps
+    public static final String GET_MAP_TILE_URLS_FOR_FARM =
+        "rest:get:/farm/{farmId}/tile/urls";
+
+    public static final String GET_RMPP_MOVEMENT =
+        "rest:get:/rmpp/calculator/getMovements/{season}";
+    public static final String SAVE_MOVEMENT_RMPP =
+        "rest:post:/rmpp/calculator/saveMovement";
+    public static final String DELETE_MOVEMENT_RMPP =
+        "rest:get:/rmpp/calculator/deleteMovement/{movementId}";
+
+    public static final String GET_RMPP_STOCKCOUNT =
+        "rest:get:/rmpp/calculator/getStockCounts/{season}";
+    public static final String SAVE_STOCKCOUNT_RMPP =
+        "rest:post:/rmpp/calculator/saveStockCount";
+    public static final String DELETE_STOCKCOUNT_RMPP =
+        "rest:get:/rmpp/calculator/deleteStockCount/{stockCountId}";
+
+    public static final String GET_RMPP_PRODUCECOUNT =
+        "rest:get:/rmpp/calculator/getProduceCounts/{season}";
+    public static final String SAVE_PRODUCECOUNT_RMPP =
+        "rest:post:/rmpp/calculator/saveProduceCount";
+    public static final String DELETE_PRODUCECOUNT_RMPP =
+        "rest:get:/rmpp/calculator/deleteProduceCount/{produceCountId}";
+
+    public static final String NOTIFYABLE_DISEASES =
+        "rest:get:/disease/notifyable/{organisationId}/{from}/{to}";
+
+    public static final String GET_PADDOCK_GROWTH_RATES =
+        "rest:post:/farm/{farmId}/paddock/multi/growthrate";
+
+    public static final String PASTURE_GROWTH_RATE_WIDGET_GET =
+        "rest:post:/dashboard/pasturegrowthrate/{farmId}/getData";
+    public static final String PASTURE_GROWTH_RATE_WIDGET_SAVE =
+        "rest:post:/dashboard/pasturegrwothrate/{farmId}/{widgetId}";
+
+    public static final String PUSH_NOTITFICATION = "rest:get:/pushNotification";
+
+    public static final String REGISTER_DEVICE_ID = "rest:post:/registerDevice";
+    public static final String REGISTER_DEVICE_ID_2 = "rest:post:/registerDevice/{username}";
+    public static final String REGISTER_DEVICE_SAFEVISIT_ID =
+        "rest:post:/safevisit/registerDevice";
+
+    public static final String PUSH_NOTITFICATION_SETTING =
+        "rest:get:/pnsetting/{farmId}";
+
+    public static final String PUSH_NOTITFICATION_SETTING_2 =
+        "rest:get:/pnsetting/{farmId}/{userId}/{theDate}/{nocompress}";
+
+    // Product Inventory
+    public static final String FARM_PRODUCTLIST =
+        "rest:get:/farm/farmLevelProductList/{farmId}/{productType}";
+    public static final String COMPANY_PRODUCTLIST =
+        "rest:get:/company/companyLevelProductList/{companyId}/{productType}";
+    public static final String ORG_PRODUCTLIST =
+        "rest:get:/org/orgLevelProductList/{organisationId}/{productType}";
+    public static final String GLOBAL_PRODUCTLIST =
+        "rest:get:/global/globalLevelProductList/{productType}";
+
+    public static final String PRODUCTS_FERTILISER_GLOBAL_SAVE =
+        "rest:post:/products/save/feriliser/global";
+    public static final String PRODUCTS_FERTILISER_ORG_SAVE =
+        "rest:post:/products/save/feriliser/org/{organisationId}";
+    public static final String PRODUCTS_FERTILISER_FARM_SAVE =
+        "rest:post:/products/save/feriliser/farm/{farmId}";
+    public static final String PRODUCTS_FERTILISER_COMPANY_SAVE =
+        "rest:post:/products/save/feriliser/company/{companyId}";
+
+    public static final String PRODUCTS_EFFLUENT_ORG_SAVE =
+        "rest:post:/products/save/effluent/org/{organisationId}";
+    public static final String PRODUCTS_EFFLUENT_FARM_SAVE =
+        "rest:post:/products/save/effluent/farm/{farmId}";
+    public static final String PRODUCTS_EFFLUENT_FARM_SAVE_WITH_POND =
+        "rest:post:/products/save/effluent/farm/{farmId}/{effluentPondId}";
+    public static final String EFFLUENT_TYPES_POND =
+        "rest:get:/farm/effluenttypes/pond/{effluentPondId}";
+
+    public static final String PRODUCTS_CHEMICAL_GLOBAL_SAVE =
+        "rest:post:/products/save/chemical/global";
+    public static final String PRODUCTS_CHEMICAL_ORG_SAVE =
+        "rest:post:/products/save/chemical/org/{organisationId}";
+    public static final String PRODUCTS_CHEMICAL_FARM_SAVE =
+        "rest:post:/products/save/chemical/farm/{farmId}";
+    public static final String PRODUCTS_CHEMICAL_COMPANY_SAVE =
+        "rest:post:/products/save/chemical/company/{companyId}";
+
+    public static final String PRODUCTS_TREATMENT_GLOBAL_SAVE =
+        "rest:post:/products/save/treatment/global";
+    public static final String PRODUCTS_TREATMENT_ORG_SAVE =
+        "rest:post:/products/save/treatment/org/{organisationId}";
+    public static final String PRODUCTS_TREATMENT_FARM_SAVE =
+        "rest:post:/products/save/treatment/farm/{farmId}";
+    public static final String PRODUCTS_TREATMENT_COMPANY_SAVE =
+        "rest:post:/products/save/treatment/company/{companyId}";
+
+    public static final String PRODUCTS_FEED_GLOBAL_SAVE =
+        "rest:post:/products/save/feed/global";
+    public static final String PRODUCTS_FEED_ORG_SAVE =
+        "rest:post:/products/save/feed/org/{organisationId}";
+    public static final String PRODUCTS_FEED_FARM_SAVE =
+        "rest:post:/products/save/feed/farm/{farmId}";
+    public static final String PRODUCTS_FEED_COMPANY_SAVE =
+        "rest:post:/products/save/feed/company/{companyId}";
+
+    public static final String PRODUCTS_SEED_CULTIVAR_GLOBAL_SAVE =
+        "rest:post:/products/save/seed/cultivar/global";
+    public static final String PRODUCTS_SEED_CULTIVAR_ORG_SAVE =
+        "rest:post:/products/save/seed/cultivar/org/{organisationId}";
+    public static final String PRODUCTS_SEED_CULTIVAR_FARM_SAVE =
+        "rest:post:/products/save/seed/cultivar/farm/{farmId}";
+    public static final String PRODUCTS_SEED_CULTIVAR_COMPANY_SAVE =
+        "rest:post:/products/save/seed/cultivar/company/{companyId}";
+
+    public static final String PRODUCTS_SEED_MIX_GLOBAL_SAVE =
+        "rest:post:/products/save/seed/mix/global";
+    public static final String PRODUCTS_SEED_MIX_ORG_SAVE =
+        "rest:post:/products/save/seed/mix/org/{organisationId}";
+    public static final String PRODUCTS_SEED_MIX_FARM_SAVE =
+        "rest:post:/products/save/seed/mix/farm/{farmId}";
+    public static final String PRODUCTS_SEED_MIX_COMPANY_SAVE =
+        "rest:post:/products/save/seed/mix/company/{companyId}";
+    public static final String SAVE_SOLID_TARGETS =
+        "rest:post:/targets/solids/farm/{farmId}/save";
+
+    public static final String DAIRY_SEASON_PERFORMANCE =
+        "rest:get:/dashboard/dairy/seasonperformance/{farmId}";
+    public static final String DAIRY_SEASON_PERFORMANCE_COMPANY =
+        "rest:get:/dashboardcompany/dairy/seasonperformance/{companyId}";
+
+    public static final String DAIRY_SEASON_PERFORMANCE_ORG =
+        "rest:get:/dashboardorg/dairy/seasonperformance/{organisationId}";
+
+    public static final String LAND_BATCH_REMOVE_INVENTORY =
+        "rest:post:/products/land/inventory/remove/{farmId}/{batchId}";
+    public static final String TREATMENT_BATCH_REMOVE_INVENTORY =
+        "rest:post:/products/treatment/inventory/remove/{farmId}/{batchId}";
+    public static final String FEED_BATCH_REMOVE_INVENTORY =
+        "rest:post:/products/feed/inventory/remove/{farmId}/{batchId}";
+
+    public static final String PRODUCTS_LAND_APPLICATION_GLOBAL_DELETE =
+        "rest:get:/products/delete/landapplication/global/{landApplicationId}";
+    public static final String PRODUCTS_LAND_APPLICATION_ORG_DELETE =
+        "rest:get:/products/delete/landapplication/org/{organisationId}/{landApplicationId}";
+    public static final String PRODUCTS_LAND_APPLICATION_FARM_DELETE =
+        "rest:get:/products/delete/landapplication/farm/{farmId}/{landApplicationId}";
+    public static final String PRODUCTS_LAND_APPLICATION_COMPANY_DELETE =
+        "rest:get:/products/delete/landapplication/company/{companyId}/{landApplicationId}";
+    public static final String PRODUCTS_LAND_APPLICATION_ORG_TOGGLE =
+        "rest:get:/products/toggle/landapplication/org/{organisationId}/{landApplicationId}";
+    public static final String PRODUCTS_LAND_APPLICATION_FARM_TOGGLE =
+        "rest:get:/products/toggle/landapplication/farm/{farmId}/{landApplicationId}";
+    public static final String PRODUCTS_SUPP_FEED_ORG_TOGGLE =
+        "rest:get:/products/toggle/suppfeed/org/{organisationId}/{productId}";
+    public static final String PRODUCTS_SUPP_FEED_BUSINESS_UNIT_TOGGLE =
+        "rest:get:/products/toggle/suppfeed/businessunit/{businessUnitId}/{productId}";
+    public static final String ADD_SUPPLIER_GLOBAL =
+        "rest:post:/suppliers/global/add";
+
+    public static final String SUPP_FEED_ORG_DELETE =
+        "rest:get:/products/delete/feed/org/{organisationId}/{productId}";
+    public static final String PRODUCTS_TREATMENT_FARM_DELETE =
+        "rest:get:/products/delete/treatment/farm/{farmId}/{productId}";
+    public static final String PRODUCTS_TREATMENT_COMPANY_DELETE =
+        "rest:get:/products/delete/treatment/company/{companyId}/{productId}";
+    public static final String PRODUCTS_TREATMENT_ORG_DELETE =
+        "rest:get:/products/delete/treatment/org/{organisationId}/{productId}";
+    public static final String PRODUCTS_TREATMENT_GLOBAL_DELETE =
+        "rest:get:/products/delete/treatment/global/{productId}";
+
+    public static final String SAVE_INVENTORY_FILTER =
+        "rest:post:/inventoryfilter/save";
+    // spring rotation plan services
+    public static final String SPRING_ROTATION_PLAN_SAVE =
+        "rest:post:/springrotationplan/inputs/save/{farmId}";
+    public static final String SPRING_ROTATION_PLAN_GET_ACTUAL_COVERS =
+        "rest:post:/springrotationplan/actual/covers/{farmId}";
+
+    public static final String DEATHS_AND_LOSSES_REPORT_GET =
+        "rest:post:/deathsandlosses/report/get";
+    public static final String DEATHS_AND_LOSSES_REPORT_SAVE_CRITERIA =
+        "rest:post:/deathsandlosses/report/saveDefault";
+    public static final String DEATHS_AND_LOSSES_REPORT_CLEAR_CRITERIA =
+        "rest:post:/deathsandlosses/report/clearDefault";
+
+    public static final String LAND_INVENTORY_ACTIVITY =
+        "rest:post:/products/activity/land";
+    public static final String FEED_INVENTORY_ACTIVITY =
+        "rest:post:/products/activity/feed";
+    public static final String TREATMENT_INVENTORY_ACTIVITY =
+        "rest:post:/products/activity/treatment";
+
+    public static final String MOBILE_SAVE_LAND_REDUCTION =
+        "rest:post:/products/activity/mobile/land";
+    public static final String MOBILE_SAVE_LAND_REDUCTION_2 =
+        "rest:post:/products/activity/mobile/land/{record}";
+    public static final String MOBILE_SAVE_FEED_REDUCTION =
+        "rest:post:/products/activity/mobile/feed/{userId}";
+    public static final String MOBILE_SAVE_TREATMENT_REDUCTION =
+        "rest:post:/products/activity/mobile/treatment/{userId}";
+
+    public static final String ORGANISATION_SAVE_FARM_MILK_SALE =
+        "rest:post:/organisation/save/milksale";
+    public static final String DAIRY_FEED_PLANNER_SAVE =
+        "rest:post:/farm/planning/dairyfeedplanner/save/{farmId}";
+    public static final String DAIRY_FEED_PLANNER_CHECK_FOR_OVERLAPS =
+        "rest:post:/farm/planning/dairyfeedplanner/check/overlap/{farmId}";
+    public static final String DAIRY_FEED_PLANNER_GET_FEED_PRODUCT_INFO =
+        "rest:get:/farm/planning/dairyfeedplanner/get/suppfeed/info/{farmId}/{startDate}/{endDate}";
+    public static final String DAIRY_FEED_PLANNER_GET_PASTURE_INFO =
+        "rest:get:/farm/planning/dairyfeedplanner/get/pasture/info/{farmId}/{startDate}/{endDate}";
+    public static final String DAIRY_FEED_PLANNER_GET_SIGNOFF_INFO =
+        "rest:get:/farm/planning/dairyfeedplanner/get/signoff/data/{farmId}/{planId}/{signOffDate}";
+    public static final String DAIRY_FEED_PLANNER_GET_SUP_FEED_INVENTORY_INFO =
+        "rest:post:/farm/planning/dairyfeedplanner/get/inventory/info/{farmId}/{startDate}/{endDate}";
+
+    public static final String MOBILE_SAVE_LAND_BATCH =
+        "rest:post:/batch/save/land/{farmId}";
+    public static final String MOBILE_SAVE_TREATMENT_BATCH =
+        "rest:post:/batch/save/treatment/{farmId}";
+    public static final String MOBILE_SAVE_FEED_BATCH =
+        "rest:post:/batch/save/feed/{farmId}";
+
+    public static final String MOBILE_SAVE_LAND_BATCH_2 =
+        "rest:post:/batch/save/land/{farmId}/{userId}";
+    public static final String MOBILE_SAVE_TREATMENT_BATCH_2 =
+        "rest:post:/batch/save/treatment/{farmId}/{userId}";
+    public static final String MOBILE_SAVE_FEED_BATCH_2 =
+        "rest:post:/batch/save/feed/{farmId}/{userId}";
+
+    public static final String MOBILE_SAVE_CHEMICAL_PRODUCT =
+        "rest:post:/product/mobile/save/chemical";
+    public static final String MOBILE_SAVE_FERTILISER_PRODUCT =
+        "rest:post:/product/mobile/save/fertiliser";
+    public static final String MOBILE_SAVE_FEED_PRODUCT =
+        "rest:post:/product/mobile/save/feed";
+    public static final String MOBILE_SAVE_TREATMENT_PRODUCT =
+        "rest:post:/product/mobile/save/treatment";
+
+    public static final String MOBILE_SAVE_CHEMICAL_PRODUCT_2 =
+        "rest:post:/product/mobile/save/chemical/{userId}";
+    public static final String MOBILE_SAVE_FERTILISER_PRODUCT_2 =
+        "rest:post:/product/mobile/save/fertiliser/{userId}";
+    public static final String MOBILE_SAVE_FEED_PRODUCT_2 =
+        "rest:post:/product/mobile/save/feed/{userId}";
+    public static final String MOBILE_SAVE_TREATMENT_PRODUCT_2 =
+        "rest:post:/product/mobile/save/treatment/{userId}";
+
+    public static final String EDIT_PADDOCK_BOUNDARY =
+        "rest:post:/paddocks/editpaddockoutline/{farmId}";
+
+    public static final String FARM_DETAILS =
+        "rest:get:/farm/farmDetails/{farmId}";
+    public static final String SAVE_FARM_DETAILS =
+        "rest:post:/farm/save/farmDetails/{farmId}";
+
+    public static final String FARM_ASSETS_HIDDEN =
+        "rest:get:/farm/assets/hidden/list/{farmId}";
+    public static final String SAVE_FARM_ASSETS_HIDDEN =
+        "rest:post:/farm/assets/hidden/save/{farmId}";
+
+    // Mr70
+    public static final String FARM_DETAILS_MR70 =
+        "rest:get:/farm/farmDetails/MR70/{farmId}";
+    public static final String SAVE_FARM_DETAILS_MR70 =
+        "rest:post:/farm/save/farmDetails/MR70/{farmId}";
+    public static final String SAVE_FARM_DETAILS_MR70_PURCHASES =
+        "rest:post:/farm/save/farmDetailsPurchases/MR70/{farmId}";
+    public static final String GET_FARM_DETAILS_MR70_PURCHASES =
+        "rest:get:/farm/get/farmDetailsPurchases/MR70/{farmId}";
+
+    // Assets
+
+    // General cache
+    public static final String ASSET_CACHE =
+        "rest:get:/farm/farmassetcache/list/{farmId}/{lastRefresh}/{compressed}";
+
+    // Vehicles
+    public static final String FARM_VEHICLES =
+        "rest:get:/farm/vehicleList/{farmId}";
+    public static final String FARM_VEHICLES_COMPRESSED =
+        "rest:get:/farm/vehicleList/{farmId}/{lastRefresh}/{compressed}";
+    public static final String FARM_VEHICLES_LITE =
+        "rest:get:/farm/vehicleList/lite/{farmId}";
+    public static final String FARM_VEHICLES_LITE_COMPRESSED =
+        "rest:get:/farm/vehicleList/lite/{farmId}/{lastRefresh}/{compressed}";
+    public static final String SAVE_FARM_VEHICLES =
+        "rest:post:/farm/assets/save/vehicle/{farmId}";
+    public static final String UPDATE_FARM_VEHICLE =
+        "rest:post:/farm/assets/update/vehicle/{farmId}";
+    public static final String DELETE_FARM_VEHICLE =
+        "rest:post:/farm/assets/delete/vehicle/{farmId}";
+    // W Ruc
+    public static final String SAVE_FARM_VEHICLES_WITH_RUC =
+        "rest:post:/farm/assets/save/vehiclewithruc/{farmId}";
+
+    // Equipment
+    public static final String FARM_EQUIPMENT =
+        "rest:get:/farm/equipmentList/{farmId}";
+    public static final String FARM_EQUIPMENT_COMPRESSED =
+        "rest:get:/farm/equipmentList/{farmId}/{lastRefresh}/{compressed}";
+    public static final String FARM_EQUIPMENT_INCLUDE_MAINTENANCE =
+        "rest:get:/farm/equipmentList/maintenance/{farmId}";
+    public static final String SAVE_FARM_EQUIPMENT =
+        "rest:post:/farm/assets/save/equipment/{farmId}";
+    public static final String UPDATE_FARM_EQUIPMENT =
+        "rest:post:/farm/assets/update/equipment/{farmId}";
+    public static final String DELETE_FARM_EQUIPMENT =
+        "rest:post:/farm/assets/delete/equipment/{farmId}";
+
+    // Fuel Tank
+    public static final String FARM_FUEL_TANKS =
+        "rest:get:/farm/fuelTankList/{farmId}";
+    public static final String FARM_FUEL_TANKS_COMPRESSED =
+        "rest:get:/farm/fuelTankList/{farmId}/{lastRefresh}/{compressed}";
+    public static final String FARM_FUEL_TANKS_LITE =
+        "rest:get:/farm/fuelTankList/lite/{farmId}";
+    public static final String FARM_FUEL_TANKS_LITE_COMPRESSED =
+        "rest:get:/farm/fuelTankList/lite/{farmId}/{lastRefresh}/{compressed}";
+    public static final String SAVE_FARM_FUELTANK =
+        "rest:post:/farm/assets/save/fueltank/{farmId}";
+    public static final String UPDATE_FARM_FUELTANK =
+        "rest:post:/farm/assets/update/fueltank/{farmId}";
+    public static final String DELETE_FARM_FUELTANK =
+        "rest:post:/farm/assets/delete/fueltank/{farmId}";
+
+    // Irrigator
+    public static final String FARM_IRRIGATORS =
+        "rest:get:/farm/irrigatorsList/{farmId}";
+    public static final String SAVE_FARM_IRRIGATOR =
+        "rest:post:/farm/irrigator/save/{farmId}";
+    public static final String DELETE_FARM_IRRIGATOR =
+        "rest:post:/farm/irrigator/delete/{farmId}";
+
+    // Effluent sprayers
+    public static final String FARM_EFFLUENT_SPRAYERS =
+        "rest:get:/farm/effluentSprayerList/{farmId}";
+    public static final String SAVE_FARM_EFFLUENT_SPRAYER =
+        "rest:post:/farm/effluentSprayer/save/{farmId}";
+    public static final String DELETE_FARM_EFFLUENT_SPRAYER =
+        "rest:post:/farm/effluentSprayer/delete/{farmId}";
+
+    // Buildings
+    public static final String FARM_BUILDINGS =
+        "rest:get:/farm/building/List/{farmId}";
+    public static final String SAVE_FARM_BUILDING =
+        "rest:post:/farm/building/save/{farmId}";
+    public static final String DELETE_FARM_BUILDING =
+        "rest:post:/farm/building/delete/{farmId}";
+
+    // Troughs
+    public static final String FARM_TROUGHS =
+        "rest:get:/farm/trough/List/{farmId}";
+    public static final String SAVE_FARM_TROUGH =
+        "rest:post:/farm/trough/save/{farmId}";
+    public static final String DELETE_FARM_TROUGH =
+        "rest:post:/farm/trough/delete/{farmId}";
+
+    // Water tanks
+    public static final String FARM_WATER_TANKS =
+        "rest:get:/farm/waterTank/list/{farmId}";
+    public static final String SAVE_FARM_WATER_TANKS =
+        "rest:post:/farm/waterTank/save/{farmId}";
+    public static final String DELETE_FARM_WATER_TANKS =
+        "rest:post:/farm/waterTank/delete/{farmId}";
+
+    // Plant and machinery
+    public static final String FARM_PLANTS_AND_MACHINERY =
+        "rest:get:/farm/plantAndMachinery/list/{farmId}";
+    public static final String SAVE_FARM_PLANTS_AND_MACHINERY =
+        "rest:post:/farm/plantAndMachinery/save/{farmId}";
+    public static final String DELETE_FARM_PLANTS_AND_MACHINERY =
+        "rest:post:/farm/plantAndMachinery/delete/{farmId}";
+
+    // Effluent ponds
+    public static final String FARM_EFFLUENT_PONDS =
+        "rest:get:/farm/effluentpondlist/{farmId}";
+    public static final String FARM_CLIENT_EFFLUENT_PONDS =
+        "rest:get:/farm/clienteffluentpondlist/{farmId}";
+    public static final String FARM_CLIENT_EFFLUENT_PONDS_COMPRESSED =
+        "rest:get:/farm/clienteffluentpondlist/{farmId}/{lastRefresh}/{compressed}";
+
+    public static final String SAVE_FARM_EFFLUENT_POND =
+        "rest:post:/farm/effluentpond/save/{farmId}";
+    public static final String DELETE_FARM_EFFLUENT_POND =
+        "rest:post:/farm/effluentpond/delete/{farmId}";
+
+    // RUC Licence
+    public static final String UPDATE_RUC_LICENCE =
+        "rest:post:/farm/assets/update/ruclicence/{farmId}";
+    public static final String DELETE_RUC_LICENCE =
+        "rest:post:/farm/assets/delete/ruclicence/{farmId}";
+    public static final String VEHICLE_RUC_LICENCES =
+        "rest:get:/farm/RUCLicenceList/{vehicleId}";
+    public static final String SAVE_VEHICLE_RUCLICENCE =
+        "rest:post:/farm/update/ruclicence/{farmId}";
+
+    // FuelUsage
+    public static final String FARM_FUEL_USAGE =
+        "rest:get:/farm/fuelUsageList/{farmId}";
+    public static final String DELETE_FUEL_USAGE =
+        "rest:post:/farm/assets/delete/fuelusage/{farmId}";
+    public static final String UPDATE_FARM_FUEL_USAGE =
+        "rest:post:/farm/fuel/usage/update/{farmId}";
+    public static final String SAVE_FARM_FUEL_USAGE =
+        "rest:post:/farm/fuel/usage/save/{farmId}";
+
+    // Fuel Top Up
+    public static final String FARM_FUEL_TOP_UPS =
+        "rest:get:/farm/fuelTopUpsList/{farmId}";
+    public static final String DELETE_FUEL_TOPUP =
+        "rest:post:/farm/assets/delete/fueltopups/{farmId}";
+    public static final String UPDATE_FARM_FUEL_TOPUP =
+        "rest:post:/farm/fuel/topup/update/{farmId}";
+    public static final String SAVE_FARM_FUEL_TOPUP =
+        "rest:post:/farm/fuel/topup/save/{farmId}";
+    public static final String SAVE_FARM_FUEL_TOPUP_2 =
+        "rest:post:/farm/fuel/topup/save/{farmId}/{userId}";
+
+    // AgriFuel Widget
+    public static final String FUEL_TANK_WIDGET_GET =
+        "rest:post:/dashboard/fueltank/{farmId}/getData";
+    public static final String FUEL_TANK_WIDGET_SAVE =
+        "rest:post:/dashboard/fueltank/{farmId}/{widgetId}";
+
+    public static final String CRV_WIDGET_SAVE =
+        "rest:post:/dashboard/crvwidget/{farmId}/{widgetId}";
+    // Incident questions
+    public static final String HS_BODY_LOCATION =
+        "rest:get:/farm/get/bodylocation";
+    public static final String HS_BODY_LOCATION_2 =
+        "rest:get:/farm/get/bodylocation/{lastRefresh}/{compressed}";
+
+    public static final String HS_INITIAL_NEED = "rest:get:/farm/get/initialneed";
+    public static final String HS_INITIAL_NEED_2 =
+        "rest:get:/farm/get/initialneed/{lastRefresh}/{compressed}";
+    public static final String HS_INCIDENT_NATURE =
+        "rest:get:/farm/get/incidentnature";
+    public static final String HS_INCIDENT_NATURE_2 =
+        "rest:get:/farm/get/incidentnature/{lastRefresh}/{compressed}";
+
+    public static final String ALL_FARM_HARZARD_LIST =
+        "rest:get:/farm/get/allhazardlist/{farmId}";
+    public static final String ALL_FARM_HARZARD_LIST_COMPRESSED =
+        "rest:get:/farm/get/allhazardlist/{farmId}/{lastRefresh}/{compressed}";
+
+    public static final String PREQUAL_SAVEUSER =
+        "rest:post:/contractor/prequal/save/{farmId}";
+    public static final String PREQUAL_SAVECONTRACTOR =
+        "rest:post:/contractor/prequal/key/savecontractor/{key}";
+    public static final String PREQUAL_SUBMIT =
+        "rest:post:/contractor/prequal/submit/{farmId}";
+    public static final String PREQUAL_DEACTIVATE =
+        "rest:get:/contractor/prequal/deactivate/{farmId}/{contractId}";
+
+    public static final String COMPANY_HIDE =
+        "rest:get:/contractor/company/hide/{farmId}/{companyId}";
+    public static final String COMPANY_SHOW =
+        "rest:get:/contractor/company/show/{farmId}/{companyId}";
+
+    public static final String PREQUAL_APPROVE =
+        "rest:post:/contractor/prequal/approve/{farmId}";
+    public static final String PREQUAL_REJECT =
+        "rest:post:/contractor/prequal/reject/{farmId}";
+    public static final String PREQUAL_CANCEL =
+        "rest:post:/contractor/prequal/cancel/{farmId}/{sendEmail}";
+    public static final String PREQUAL_RETURN =
+        "rest:post:/contractor/prequal/key/return/{key}";
+    public static final String PREQUAL_GET =
+        "rest:get:/contractor/prequal/key/get/{key}";
+    public static final String PREQUAL_GET_CONTRACTOR =
+        "rest:get:/contractor/prequal/get/contractor/{farmId}/{id}";
+    public static final String SEARCH_CONTRACTOR =
+        "rest:post:/contractor/search/{farmId}";
+    public static final String SEARCH_COMPANIES =
+        "rest:post:/companies/search/{organisationId}";
+    public static final String SEARCH_COMPANIES_GLOBAL =
+        "rest:post:/companies/search";
+    public static final String SEARCH_COMPANIES_GLOBAL_ALL =
+        "rest:post:/companies/searchAll";
+    public static final String MANAGE_COMPANIES_GLOBAL =
+        "rest:post:/companies/manage";
+
+    public static final String SEARCH_COMPANIES_GLOBAL_PENDING =
+        "rest:get:/companies/pending";
+    public static final String UPDATE_COMPANY_STATUS =
+        "rest:get:/companies/update/{companyId}/{status}";
+    public static final String UPDATE_COMPANY_STATUS_NEW_EMAIL =
+        "rest:get:/companies/update/{companyId}/{status}/{email}";
+    public static final String BUSINESS_NAME_LIST =
+        "rest:get:/contractor/businessname/get/list/{organisationId}";
+    public static final String BUSINESS_NAME_LIST_COMPRESSED =
+        "rest:get:/contractor/businessname/get/list/{organisationId}/{lastRefresh}/{compressed}";
+    public static final String DELETE_CONTRACTOR =
+        "rest:get:/contractor/delete/{farmId}/{id}";
+
+    public static final String SEARCH_SAFEVISIT_GLOBAL =
+        "rest:post:/safevisit/search";
+    public static final String UPDATE_SAFEVISIT_STATUS =
+        "rest:get:/safevisit/update/{userId}/{status}";
+    public static final String UPDATE_SAFEVISIT_STATUS_NEW_EMAIL =
+        "rest:get:/safevisit/updateemail/{userId}/{status}/{email}";
+
+    // NAIT Numbers
+    public static final String NAIT_NUMBERS =
+        "rest:get:/farm/naitNumbersList/{farmId}";
+    public static final String SAVE_NAIT_NUMBER =
+        "rest:post:/farm/IDNumbers/save/NAIT/{farmId}";
+    public static final String SAVE_NAIT_NUMBER_MOVEMENT_DAY =
+        "rest:post:/farm/IDNumbers/save/NAIT/{farmId}/movementDay";
+    public static final String DELETE_MOVEMENT_DAY =
+        "rest:get:/farm/IDNumbers/delete/NAIT/{farmId}/{animal-event-id}/movementDay";
+    public static final String DELETE_NAIT_NUMBER =
+        "rest:post:/farm/IDNumbers/delete/NAIT/{farmId}";
+    public static final String NAIT_NUMBERS_STAFF =
+        "rest:get:/farm/naitNumbersStaffList/{farmId}";
+    public static final String CHECK_NAIT_NUMBER =
+        "rest:post:/farm/IDNumbers/check/NAIT/{farmId}";
+
+    // FOL Numbers
+    public static final String FOL_NUMBERS =
+        "rest:get:/farm/folNumbersList/{farmId}";
+    public static final String SAVE_FOL_NUMBER =
+        "rest:post:/farm/IDNumbers/save/FOL/{farmId}";
+    public static final String DELETE_FOL_NUMBER =
+        "rest:post:/farm/IDNumbers/delete/FOL/{farmId}";
+    public static final String CHECK_FOL_NUMBER =
+        "rest:post:/farm/IDNumbers/check/FOL/{farmId}";
+
+    // AHB Numbers
+    public static final String AHB_NUMBERS =
+        "rest:get:/farm/ahbNumbersList/{farmId}";
+    public static final String SAVE_AHB_NUMBER =
+        "rest:post:/farm/IDNumbers/save/AHB/{farmId}";
+    public static final String DELETE_AHB_NUMBER =
+        "rest:post:/farm/IDNumbers/delete/AHB/{farmId}";
+    public static final String CHECK_AHB_NUMBER =
+        "rest:post:/farm/IDNumbers/check/AHB/{farmId}";
+    public static final String TB_STATUSES = "rest:get:/farm/TBStatuses/{farmId}";
+
+    public static final String WORK_SAVEUSER =
+        "rest:post:/contractor/work/save/{farmId}";
+    public static final String WORK_SAVECONTRACTOR =
+        "rest:post:/contractor/work/key/savecontractor/{key}";
+    public static final String WORK_SUBMIT =
+        "rest:post:/contractor/work/submit/{farmId}";
+    public static final String WORK_DEACTIVATE =
+        "rest:get:/contractor/work/deactivate/{farmId}/{contractId}/{sendEmail}";
+    public static final String WORK_APPROVE =
+        "rest:post:/contractor/work/approve/{farmId}";
+    public static final String WORK_REJECT =
+        "rest:post:/contractor/work/reject/{farmId}";
+    public static final String WORK_RETURN =
+        "rest:post:/contractor/work/key/return/{key}";
+    public static final String WORK_REJECT_CONTRACTOR =
+        "rest:post:/contractor/work/key/rejectwork/{key}";
+    public static final String WORK_GET =
+        "rest:get:/contractor/work/key/get/{key}";
+    public static final String WORK_GET_CONTRACTOR =
+        "rest:get:/contractor/work/get/contractor/{farmId}/{id}";
+    public static final String WORK_SAVENEWCOMPANY =
+        "rest:post:/contractor/work/save/newcompany/{farmId}";
+    public static final String WORK_SAVENEWCONTRACTOR =
+        "rest:post:/contractor/work/save/newcontractor/{farmId}";
+    public static final String WORK_SAVEEXISTINGCONTRACTOR =
+        "rest:post:/contractor/work/save/existingcontractor/{farmId}/{id}";
+    public static final String WORK_EDITCOMPANYNAME =
+        "rest:post:/contractor/work/save/existingcompany/{farmId}/{id}";
+    public static final String SCHEDULED_WORK =
+        "rest:get:/contractor/work/get/{farmId}/{contractId}";
+    public static final String SCHEDULED_WORK_ID =
+        "rest:get:/contractor/work/getbyid/{farmId}/{id}";
+
+    public static final String CONTRACTOR_COMPANIES =
+        "rest:get:/contractor/companies/list/{farmId}";
+
+    public static final String HS_RISK_ASSIGNMENT =
+        "rest:get:/healthandsafety/riskassignment/{organisationId}";
+    public static final String HS_RISK_ASSIGNMENT_COMPRESSED =
+        "rest:get:/healthandsafety/riskassignment/{organisationId}/{lastRefresh}/{compressed}";
+    public static final String HS_LIKELIHOOD =
+        "rest:get:/healthandsafety/likelihood/{organisationId}";
+    public static final String HS_LIKELIHOOD_COMPRESSED =
+        "rest:get:/healthandsafety/likelihood/{organisationId}/{lastRefresh}/{compressed}";
+    public static final String HS_CONSEQUENCES =
+        "rest:get:/healthandsafety/consequences/{organisationId}";
+    public static final String HS_CONSEQUENCES_COMPRESSED =
+        "rest:get:/healthandsafety/consequences/{organisationId}/{lastRefresh}/{compressed}";
+
+    public static final String TODO_GET_LISTS =
+        "rest:get:/todo/get/lists/{businessUnitId}";
+    public static final String TODO_GET_ITEMS_SINCE =
+        "rest:get:/todo/get/items/{businessUnitId}/{since}/{compression}";
+    public static final String TODO_GET_FOR_LIST =
+        "rest:get:/todo/get/for/{listId}/{businessUnitId}";
+    public static final String TODO_POST_LIST =
+        "rest:post:/todo/post/for/{businessUnitId}";
+    public static final String TODO_COMPLETE =
+        "rest:get:/todo/complete/for/{itemId}/{businessUnitId}";
+    public static final String TODO_DELETE =
+        "rest:get:/todo/delete/for/{itemId}/{businessUnitId}";
+    public static final String TODO_UNCOMPLETE =
+        "rest:get:/todo/uncomplete/for/{itemId}/{businessUnitId}";
+
+    public static final String PREFERENCES_SINCE =
+        "rest:get:/preferences/get/items/{businessUnitId}/{since}/{compression}";
+    public static final String PREFERENCES_POST =
+        "rest:post:/preferences/post/for/{businessUnitId}";
+
+    public static final String CORRECTIVE_ACTION_POST =
+        "rest:post:/correctiveaction/post/for/{businessUnitId}";
+    public static final String CORRECTIVE_ACTION_SEARCH =
+        "rest:get:/correctiveactions/search/{businessUnitId}/{startDate}/{endDate}/{showComplete}";
+
+    //////////////////////////////////////////////////////////
+    // Onboarding services //
+    //////////////////////////////////////////////////////////
+    public static final String FIND_PLACES_SIMILAR_TO_STRING =
+        "rest:get:/signup/places/find/autocomplete/string/{searchtext}";
+    public static final String GET_FARMSONLINE_FARM_FROM_ID =
+        "rest:get:/signup/farmsonline/find/id/{farmsonlineid}";
+    public static final String CHECK_ORGANISATION_NAME =
+        "rest:get:/signup/organisation/check/nameinuse/{organisationName}";
+    public static final String CHECK_FARM_NAME =
+        "rest:get:/signup/farm/check/nameinuse/{farmName}";
+    public static final String CHECK_FARMLANDS_CARD_VALID =
+        "rest:get:/signup/farmlands/check/card/valid/{cardNumber}/{month}/{year}";
+    public static final String VALIDATE_FARMLANDS_SIGNUP_DETAILS =
+        "rest:post:/signup/validate/farmlands/details";
+    public static final String VALIDATE_FARMIQ_SIGNUP_DETAILS =
+        "rest:post:/signup/validate/farmiq/details";
+    public static final String CHECK_USERNAME_SIGNUP =
+        "rest:get:/signup/user/check/usernameinuse/{username}";
+    public static final String CHECK_EMAIL_SIGNUP =
+        "rest:get:/signup/user/check/emailinuse/{email}";
+    public static final String CREATE_NEW_FARM_FOR_ORG =
+        "rest:post:/add/farm/create/{orgId}";
+    public static final String SUBMIT_MAP_FARM = "rest:post:/submitmap/{farmId}";
+    //////////////////////////////////////////////////////////
+    // Document services //
+    //////////////////////////////////////////////////////////
+    public static final String DOCUMENT_LIBRARY_FARM =
+        "rest:get:/document/library/farm/{farmId}";
+    public static final String DOCUMENT_LIBRARY_COMPANY =
+        "rest:get:/document/library/company/{companyId}";
+    public static final String DOCUMENT_LIBRARY_ORG =
+        "rest:get:/document/library/org/{organisationId}";
+
+    public static final String CREATE_FOLDER_FARM =
+        "rest:post:/document/folder/new/farm/{farmId}/{folderId}";
+    public static final String CREATE_FOLDER_COMPANY =
+        "rest:post:/document/folder/new/company/{companyId}/{folderId}";
+    public static final String CREATE_FOLDER_ORG =
+        "rest:post:/document/folder/new/org/{organisationId}/{folderId}";
+
+    public static final String MOVE_FOLDER_FARM =
+        "rest:post:/document/folder/move/folder/farm/{farmId}/{folderId}/{oldFolderId}/{newFolderId}";
+    public static final String MOVE_FOLDER_COMPANY =
+        "rest:post:/document/folder/move/folder/company/{companyId}/{folderId}/{oldFolderId}/{newFolderId}";
+    public static final String MOVE_FOLDER_ORG =
+        "rest:post:/document/folder/move/folder/org/{organisationId}/{folderId}/{oldFolderId}/{newFolderId}";
+
+    public static final String MOVE_FILE_FARM =
+        "rest:post:/document/folder/move/file/farm/{farmId}/{fileId}/{oldFolderId}/{newFolderId}";
+    public static final String MOVE_FILE_COMPANY =
+        "rest:post:/document/folder/move/file/company/{companyId}/{fileId}/{oldFolderId}/{newFolderId}";
+    public static final String MOVE_FILE_ORG =
+        "rest:post:/document/folder/move/file/org/{organisationId}/{fileId}/{oldFolderId}/{newFolderId}";
+
+    public static final String MOVE_FILE_FARM_SAFE_VISIT =
+        "rest:get:/document/folder/move/file/farm/{farmId}/{fileId}/safevisit";
+    public static final String MOVE_FILE_ORG_SAFE_VISIT =
+        "rest:get:/document/folder/move/file/org/{organisationId}/{fileId}/safevisit";
+
+    public static final String EDIT_FILE_FARM_GET =
+        "rest:get:/document/farm/edit/{farmId}/{documentId}";
+    public static final String EDIT_FILE_FARM_POST =
+        "rest:post:/document/farm/edit/{farmId}/{documentId}";
+    public static final String EDIT_FILE_COMPANY_GET =
+        "rest:get:/document/company/edit/{companyId}/{documentId}";
+    public static final String EDIT_FILE_COMPANY_POST =
+        "rest:post:/document/company/edit/{companyId}/{documentId}";
+    public static final String EDIT_FILE_ORG_GET =
+        "rest:get:/document/org/edit/{organisationId}/{documentId}";
+    public static final String EDIT_FILE_ORG_POST =
+        "rest:post:/document/org/edit/{organisationId}/{documentId}";
+
+    public static final String EDIT_FOLDER_FARM =
+        "rest:post:/document/folder/edit/farm/{farmId}/{folderId}";
+    public static final String EDIT_FOLDER_COMPANY =
+        "rest:post:/document/folder/edit/company/{companyId}/{folderId}";
+    public static final String EDIT_FOLDER_ORG =
+        "rest:post:/document/folder/edit/org/{orgId}/{folderId}";
+
+    public static final String DELETE_FOLDER_FARM =
+        "rest:post:/document/folder/delete/farm/{farmId}/{folderId}";
+    public static final String DELETE_FOLDER_COMPANY =
+        "rest:post:/document/folder/delete/company/{companyId}/{folderId}";
+    public static final String DELETE_FOLDER_ORG =
+        "rest:post:/document/folder/delete/org/{organisationId}/{folderId}";
+
+    public static final String DOCUMENT_EXTENSIONS_LIST =
+        "rest:get:/documentextensions/list/{lastRefresh}/{compressed}";
+
+    public static final String UPLOAD_DOCUMENT_FARM =
+        "rest:post:/document/farm/upload/{farmId}";
+    public static final String UPLOAD_DOCUMENT_FARM_2 =
+        "rest:post:/document/farm/upload/{farmId}/{userId}";
+    public static final String DELETE_DOCUMENT_FARM_POST =
+        "rest:post:/document/farm/delete/{farmId}/{documentId}";
+    public static final String UPLOAD_DOCUMENT_COMPANY =
+        "rest:post:/document/company/upload/{companyId}";
+    public static final String DELETE_DOCUMENT_COMPANY_POST =
+        "rest:post:/document/company/delete/{companyId}/{documentId}";
+    public static final String UPLOAD_DOCUMENT_ORG =
+        "rest:post:/document/org/upload/{organisationId}";
+    public static final String DELETE_DOCUMENT_ORG_POST =
+        "rest:post:/document/org/delete/{organisationId}/{documentId}";
+    public static final String UPLOAD_DOCUMENT_AGRIVISIT =
+        "rest:post:/document/agrivisit/upload";
+
+    public static final String UPLOAD_DOCUMENT_KEY =
+        "rest:post:/document/key/upload/{key}";
+    public static final String DELETE_DOCUMENT_KEY_GET =
+        "rest:get:/document/key/delete/{key}/{documentId}";
+    public static final String DELETE_DOCUMENT_KEY_POST =
+        "rest:post:/document/key/delete/{key}/{documentId}";
+    public static final String KEY_DOCUMENT = "rest:get:/document/file/key/{key}";
+
+    public static final String ORG_DOCUMENT =
+        "rest:get:/document/file/org/{organisationId}";
+    public static final String FARM_DOCUMENT =
+        "rest:get:/document/file/farm/{farmId}";
+    public static final String COMPANY_DOCUMENT =
+        "rest:get:/document/file/company/{companyId}";
+    public static final String GLOBAL_DOCUMENT = "rest:get:/document/file/global";
+
+    public static final String SAVE_ANIMAL_DISEASE =
+        "rest:post:/animal/diseases/save";
+    public static final String DELETE_ANIMAL_DISEASE =
+        "rest:post:/animal/diseases/delete";
+
+    public static final String COUNTRIES = "rest:get:/countries";
+
+    public static final String INVENTORY_ON_HAND_FARM =
+        "rest:get:/inventory/get/onhand/farm/{farmId}";
+
+    public static final String GET_BATCH_USAGES_DATE_RANGE =
+        "rest:get:/batch/usages/{farmId}/{startDate}/{endDate}";
+
+    //////////////////////////////////////////////////////////
+    // Upgrading services //
+    //////////////////////////////////////////////////////////
+    public static final String GET_ZUORA_BASE_PACK =
+        "rest:get:/zuora/basepack/{accountId}/{uom}";
+    public static final String UPDATE_SUBSCRIPTION =
+        "rest:post:/zuora/update/{farmId}/{organisationId}";
+
+    public static final String GET_FARNIQ_BASK_PACK = "rest:get:/pack/basepacks";
+    public static final String PREVIEW_SUBSCRIPTION_PRICING =
+        "rest:get:/pack/pricing/{packId}/{quantity}/{type}";
+    public static final String PREVIEW_ALL_SUBSCRIPTION_PRICING =
+        "rest:get:/pack/preview/all/{quantity}/{type}";
+    public static final String PREVIEW_FARMIQ_SUBSCRIPTION_PRICING =
+        "rest:get:/pack/preview/farmiq/{quantity}";
+    public static final String PREVIEW_FARM_SUBSCRIPTION =
+        "rest:get:/subscription/{farmId}/{organisationId}";
+
+    public static final String HOSTED_ZUORA_PARAM =
+        "rest:get:/onboarding/paymentmethod/{isDairy}";
+
+    public static final String CORRECT_ANIMAL_COUNTS =
+        "rest:get:/correct/counts/{farmId}/{correctDate}/{yearBorn}";
+
+    public static final String CHANGE_AGRIVISIT_SETTINGS =
+        "rest:get:/change/agrivisit/access/{farmId}/{newStatus}";
+
+    public static final String LIST_PLANNED_FERT =
+        "rest:get:/list/planned/fert/{farmId}/{date}";
+
+    public static final String SAVE_FARM_VISITOR_SETTINGS =
+        "rest:post:/agrivisit/savesettings/{farmId}/farm";
+    public static final String SAVE_ORG_VISITOR_SETTINGS =
+        "rest:post:/agrivisit/savesettings/{organisationId}/org";
+
+    public static final String SAVE_FARM_VISITOR_QUESTION =
+        "rest:post:/agrivisit/savequestion/{farmId}/farm";
+    public static final String SAVE_ORG_VISITOR_QUESTION =
+        "rest:post:/agrivisit/savequestion/{organisationId}/org";
+
+    public static final String DELETE_FARM_VISITOR_QUESTION =
+        "rest:get:/agrivisit/deletequestion/{farmId}/farm/{questionId}";
+    public static final String DELETE_ORG_VISITOR_QUESTION =
+        "rest:get:/agrivisit/deletequestion/{organisationId}/org/{questionId}";
+
+    public static final String SAVE_FARM_VISITOR_DOCS =
+        "rest:post:/agrivisit/docs/{farmId}/farm";
+    public static final String SAVE_ORG_VISITOR_DOCS =
+        "rest:post:/agrivisit/docs/{organisationId}/org";
+
+    public static final String GET_FARM_VISITOR_DOCS =
+        "rest:get:/agrivisit/docs/{farmId}/get";
+    public static final String GET_ORG_VISITOR_DOCS =
+        "rest:get:/agrivisit/docs/{organisationId}/org/get";
+
+    public static final String SUBMIT_FARM_VISIT_SL =
+        "rest:post:/save/farm/visit/{farmId}/{organisationId}";
+
+    public static final String GET_FARM_VISIT_SL =
+        "rest:get:/get/farm/visits/{farmId}/{organisationId}";
+
+    public static final String GET_POSSIBLE_USERS =
+        "rest:post:/get/agrivisit/users/{farmId}/possible";
+    public static final String GET_VISITOR_USERS =
+        "rest:post:/get/agrivisit/users/{farmId}/all";
+    public static final String GET_VISITOR_USER_VISITORS =
+        "rest:post:/get/agrivisit/users/visitors/{farmId}/all";
+    public static final String GET_ASSIGNED_USERS =
+        "rest:get:/get/agrivisit/users/{farmId}/assigned";
+    public static final String ADD_ASSIGNED_USER =
+        "rest:get:/get/agrivisit/user/{farmId}/add/{userId}";
+    public static final String REMOVE_ASSIGNED_USER =
+        "rest:get:/get/agrivisit/user/{farmId}/remove/{userId}";
+    public static final String GET_USERS_COMPANY =
+        "rest:get:/get/agrivisit/users/company/{companyId}";
+    public static final String POST_USERS_COMPANY =
+        "rest:post:/post/agrivisit/users/company/{companyId}";
+
+    public static final String AGRI_MARK_MESSAGE_READ =
+        "rest:get:/get/agrivisit/messages/{farmId}/read/{visitId}/{messageId}";
+    public static final String AGRI_MARK_MESSAGE_READ_VISIT =
+        "rest:get:/get/agrivisit/messages/{farmId}/read/{visitId}/until/{date}";
+    public static final String AGRI_MARK_MESSAGE_READ_VISIT_MOBILE =
+        "rest:post:/post/agrivisit/messages/{farmId}/read/{visitId}/until/{date}";
+    public static final String AGRI_MARK_MESSAGE_READ_VISIT_MOBILE_2 =
+        "rest:post:/post/agrivisit/messages/{farmId}/read/{visitId}/until/{date}/{userId}";
+    public static final String AGRI_MESSAGES_VISIT =
+        "rest:get:/get/agrivisit/messages/{farmId}/for/{visitId}";
+    public static final String AGRI_SAVE_MESSAGE =
+        "rest:post:/post/agrivisit/messages/{farmId}/save/{visitId}";
+    public static final String AGRI_SAVE_MESSAGE_2 =
+        "rest:post:/post/agrivisit/messages/{farmId}/save/{visitId}/{userId}";
+    public static final String AGRI_SAVE_MESSAGE2 =
+        "rest:post:/post/agrivisit/messages/{farmId}/save2/{visitId}";
+    public static final String AGRI_MARK_MESSAGE_DELETED =
+        "rest:get:/get/agrivisit/messages/{farmId}/delete/{visitId}/{messageId}";
+    public static final String UNREAD_MESSAGE_COUNTS =
+        "rest:get:/get/agrivisit/messages/{farmId}/count/unread";
+    public static final String AGRI_BLOCK_VISIT_MESSAGES =
+        "rest:post:/post/agrivisit/messages/{farmId}/block/{visitId}";
+    public static final String DISMISS_UPGRADE =
+        "rest:get:/upgrade/dismiss/{farmId}";
+    public static final String UPGRADE_FARM =
+        "rest:get:/upgrade/farm/{farmId}/{dairy}";
+
+    public static final String AGRI_GET_ALL_ATTACHMENTS =
+        "rest:get:/get/agrivisit/farm/attachments/{farmId}";
+    public static final String GET_MAP_REQUEST =
+        "rest:get:/get/map/request/{farmId}";
+    public static final String POST_MAP_REQUEST =
+        "rest:post:/post/maprequest/{farmId}";
+
+    public static final String TRACMAP_FIND_CONTRACTOR =
+        "rest:post:/post/tracmap/findcontractor/{farmId}";
+
+    public static final String SAVE_CORRECTION_ACTION =
+        "rest:post:/farm/save/correctiveaction/{farmId}/";
+    public static final String SAVE_MODULE_UPGRADE =
+        "rest:post:/admin/save/modulesuggestion";
+
+    public static final String ACCEPT_TRIAL =
+        "rest:get:/farm/accept/trial/{farmId}/{orgId}";
+
+    public static final String VALIDATE_PROMO_CODE =
+        "rest:get:/user/insecure/validate/promo/{promoCode}/{packId}";
+
+    public static final String AVAILABLE_PROMO_CODES =
+        "rest:get:/admin/available/promos";
+
+    public static final String AVAILABLE_ADD_ONS =
+        "rest:get:/admin/available/addons";
+    // Fertiliser plans
+    public static final String FERTILISER_PLAN_SAVE =
+        "rest:post:/fertiliser/plan/save/{farmId}";
+    public static final String FERTILISER_PLAN_COPY =
+        "rest:post:/fertiliser/plan/copy/{farmId}/{copyPlanId}";
+    public static final String FERTILISER_GET_PLANS =
+        "rest:get:/fertiliser/plan/getplans/{farmId}";
+
+    public static final String FERTILISER_GET_PLAN_JSON =
+        "rest:get:/fertiliser/plan/getjson/{farmId}/{planId}/{filename}";
+    public static final String FERTILISER_GET_PLAN_FROM_DATE_JSON =
+        "rest:get:/fertiliser/plan/getjson/{farmId}/{planId}/{date}/{filename}";
+    public static final String FERTILISER_GET_PLAN_DELTA_JSON =
+        "rest:get:/fertiliser/plan/getjsondelta/{farmId}/{planId}/{filename}";
+
+    public static final String FERTILISER_GET_PLANS_LIST_ITEM =
+        "rest:get:/fertiliser/plan/getplanslistitem/{farmId}";
+    public static final String FERTILISER_GET_PLAN =
+        "rest:get:/fertiliser/plan/getplan/{farmId}/{planId}";
+    public static final String FERTILISER_GET_PLAN_FROM_ACTIVITY_ID =
+        "rest:get:/fertiliser/plan/getplanfromactivityid/{farmId}/{activityId}";
+    public static final String FERTILISER_GET_COLUMN_SETTINGS =
+        "rest:get:/fertiliser/plan/getcolumnsettings/{farmId}/{planId}";
+    public static final String FERTILISER_GET_ORDER =
+        "rest:get:/fertiliser/plan/getorder/{farmId}/{orderId}";
+    public static final String FERTILISER_GET_ORDER_FULL =
+        "rest:get:/fertiliser/plan/getorderfull/{farmId}/{orderId}";
+    public static final String NOT_EXISTS_MASTER_PLAN_FOR_YEAR =
+        "rest:get:/fertiliser/plan/{farmId}/notExistsMasterForYear/{year}/{planId}";
+    public static final String FERTILISER_DELETE_PLAN =
+        "rest:get:/fertiliser/plan/{farmId}/delete/{planId}";
+
+    public static final String FERTILISER_PLAN_ACTIVITY_GROUP_SAVE =
+        "rest:post:/fertiliser/plan/{planId}/group/save/{farmId}";
+    public static final String FERTILISER_PLAN_ACTIVITY_GROUP_DELETE =
+        "rest:get:/fertiliser/plan/{farmId}/deletegroup/{groupId}";
+    public static final String FERTILISER_PLAN_SAVE_TABLE_CONFIGURATION =
+        "rest:post:/fertiliser/plan/{planId}/configuration/save/{farmId}";
+    public static final String FERTILISER_PLAN_SAVE_ACTIVITY =
+        "rest:post:/fertiliser/plan/activity/save/{farmId}";
+    public static final String FERTILISER_PLAN_DELETE_ACTIVITY =
+        "rest:get:/fertiliser/plan/{farmId}/deleteActivity/{activityId}";
+    public static final String FERTILISER_PLAN_DELETE_ORDER =
+        "rest:get:/fertiliser/plan/{farmId}/deleteOrder/{activityId}";
+    public static final String FERTILISER_PLAN_SIGN_OFF_ROWS =
+        "rest:get:/fertiliser/plan/signoff/{organisationId}/{year}";
+    public static final String FERTILISER_PLAN_SAVE_SIGN_OFF_FILTER =
+        "rest:post:/fertiliser/plan/signoff/filter";
+    public static final String FERTILISER_PLAN_SAVE_SIGN_OFF_MASTER =
+        "rest:get:/fertiliser/master/signoff/{planId}/{signOffCost}";
+    public static final String FERTILISER_EDIT_AREA_DESCRIPTION =
+        "rest:post:/fertiliser/plan/{farmId}/areaDescription";
+
+    public static final String CANCEL_PROCESSOR_BOOKING =
+        "rest:get:/cancel/booking/{farmId}/{slotId}/{bookingId}/{bookingClientId}";
+    public static final String CANCEL_PROCESSOR_BOOKING_POST =
+        "rest:post:/cancel/booking/post/{farmId}";
+
+    public static final String GET_PROCESSOR_BOOKINGS =
+        "rest:get:/get/bookings/{farmId}";
+    public static final String GET_PROCESSOR_BOOKINGS_2 =
+        "rest:get:/get/bookings/{farmId}/{lastRefresh}/{nocompress}";
+    public static final String GET_PROCESSOR_BOOKINGS_COMPANY =
+        "rest:get:/get/bookings/company/{companyId}";
+    public static final String GET_PROCESSOR_SCHEDULE_COMPANY =
+        "rest:get:/get/schedule/company/{companyId}";
+    public static final String GET_PROCESSOR_SCHEDULE_FARM =
+        "rest:get:/get/schedule/company/{companyId}/{farmId}";
+    public static final String GET_PROCESSOR_SCHEDULE_FARM_2 =
+        "rest:get:/get/schedule/company/{companyId}/{farmId}/{lastRefresh}/{nocompress}";
+    public static final String SAVE_PROCESSOR_BOOKING =
+        "rest:post:/save/booking/{farmId}/{slotId}";
+    public static final String EDIT_PROCESSOR_BOOKING =
+        "rest:post:/save/booking/company/{companyId}/{bookingId}";
+    public static final String CANCEL_PROCESSOR_BOOKING_COMPANY =
+        "rest:get:/cancel/bookingcompany/{companyId}/{slotId}/{bookingId}";
+    public static final String CONFIRM_PROCESSOR_BOOKING =
+        "rest:get:/confirm/booking/company/{companyId}/{slotId}/{bookingId}";
+    public static final String CHANGE_SCHEDULE_PROCESSOR_BOOKING =
+        "rest:post:/change/schedule/company/{companyId}";
+    public static final String BOARDCAST_MESSAGE =
+        "rest:post:/visit/boardcast/message/{farmId}";
+
+    public static final String CHECK_MOBILE_VERSION_UPDATES =
+        "rest:get:/requiredmobileversion/{branding}/{platform}";
+
+    public static final String ALL_TAGGED_ANIMALS =
+        "rest:get:/animals/tagged/farm/{animalTypeId}/{farmId}";
+
+    public static final String HISTORIC_TAGGED_ANIMALS =
+        "rest:get:/animals/historic/tagged/farm/{animalTypeId}/{farmId}/{startDate}/{endDate}";
+    public static final String ALL_TAGGED_ANIMALS_CACHE =
+        "rest:get:/animals/tagged/farm/cache/{animalTypeId}/{farmId}/{time}";
+    public static final String ALL_TAGGED_ANIMALS_CACHE_COMPRESSED =
+        "rest:get:/animals/tagged/farm/cache/{animalTypeId}/{farmId}/{time}/{compressed}";
+    public static final String ALL_TAGGED_ANIMALS_GENDER =
+        "rest:get:/animals/tagged/farm/{animalTypeId}/{farmId}/{gender}";
+    public static final String ALL_TAGGED_ANIMALS_AT_DATE =
+        "rest:get:/animals/tagged/farm/{animalTypeId}/{farmId}/at/{date}";
+    public static final String ALL_TAGGED_ANIMALS_GENDER_AT_DATE =
+        "rest:get:/animals/tagged/farm/{animalTypeId}/{farmId}/{gender}/at/{date}";
+    public static final String ALL_ANIMAL_GROUPS =
+        "rest:get:/groups/tagged/farm/{farmId}";
+    public static final String ALL_MATING_DATA =
+        "rest:get:/animals/tagged/farm/{farmId}/{animalTypeId}/{animalIds}/mating/at/{date}";
+
+    public static final String FARM_NOTIFICATIONS_FOR_APPROVAL =
+        "rest:get:/notifications/for/approval/{farmId}";
+    public static final String FARM_NOTIFICATIONS_FOR_QUERY =
+        "rest:get:/notifications/for/query/{farmId}";
+
+    public static final String CRV_RELATED_FARMS =
+        "rest:get:/related/farm/list/{farmId}";
+
+    public static final String ANIMALS_CUSTOM_REPORT =
+        "rest:get:/animals/custom/report/{farmId}/{animalTypeId}";
+    public static final String CUSTOM_REPORT_LAST_USED =
+        "rest:get:/custom/last/used/{farmId}/{id}";
+    public static final String CUSTOM_REPORT_DELETED =
+        "rest:get:/custom/deleted/{farmId}/{id}";
+    /* Dashboard services */
+    public static final String DASHBOARD_PREFERENCES_BUSINESSUNIT =
+        "rest:get:/dashboard/preferences/{businessUnitId}";
+    public static final String DASHBOARD_PREFERENCES_ORGANISATION =
+        "rest:get:/dashboard/preferences/{organisationId}";
+    public static final String DASHBOARD_ANIMAL_TYPES_EVER =
+        "rest:get:/dashboard/animaltypes/{farmId}";
+    public static final String DASHBOARD_FARMS_ORGANISATION =
+        "rest:get:/dashboard/farms/org/{organisationId}";
+    public static final String DASHBOARD_FARMS_COMPANY =
+        "rest:get:/dashboard/farms/company/{companyId}";
+
+    public static final String DASHBOARD_COMPONENT_CONFIG_FARM =
+        "rest:get:/dashboard/config/farm/{farmId}";
+    public static final String DASHBOARD_COMPONENT_CONFIG_COMPANY =
+        "rest:get:/dashboard/config/company/{companyId}";
+    public static final String DASHBOARD_COMPONENT_CONFIG_ORG =
+        "rest:get:/dashboard/config/org/{organisationId}";
+
+    public static final String DASHBOARD_FARM_WEIGHT_TARGETS =
+        "rest:get:/dashboard/weightargets/farm/{farmId}";
+    public static final String DASHBOARD_ORG_WEIGHT_TARGETS =
+        "rest:get:/dashboard/weightargets/org/{organisationId}";
+    public static final String DASHBOARD_FARM_CONTRACTS =
+        "rest:get:/dashboard/contracts/farm/{farmId}";
+
+    public static final String DASHBOARD_FARM_STOCK_CLASSES =
+        "rest:get:/dashboard/stockclasses/farm/{farmId}";
+    public static final String DASHBOARD_FARM_WEATHER_STATIONS =
+        "rest:get:/dashboard/weatherstations/farm/{farmId}";
+    public static final String DASHBOARD_FARM_IRRIGATION_CONSENTS =
+        "rest:get:/dashboard/irrigationconsents/farm/{farmId}";
+    public static final String DASHBOARD_FARM_REVENUE_GROUPS =
+        "rest:get:/dashboard/revenuegroups/farm/{farmId}";
+    public static final String DASHBOARD_FARM_BREEDS =
+        "rest:get:/dashboard/breeds/farm/{farmId}";
+    public static final String DASHBOARD_FARM_FUEL_TANKS =
+        "rest:get:/dashboard/fueltanks/farm/{farmId}";
+    public static final String DASHBOARD_FARM_MOBS =
+        "rest:get:/dashboard/mobs/farm/{farmId}";
+    public static final String DASHBOARD_FARM_PASTURE_REFERENCE =
+        "rest:get:/dashboard/pasturereference/farm/{farmId}";
+    public static final String DASHBOARD_FARM_OTHER_PARTIES =
+        "rest:get:/dashboard/otherparties/farm/{farmId}";
+    public static final String DASHBOARD_FARM_GRAZIERS =
+        "rest:get:/dashboard/graziers/farm/{farmId}";
+    public static final String FIX_TIMELINE =
+        "rest:get:/animal/timeline/farm/fix/{farmId}/{preview}";
+
+    public static final String FIX_TIMELINE_WITH_BIRTHID =
+        "rest:get:/animal/timeline/farm/fix/{farmId}/{preview}/{birthId}";
+
+    public static final String DASHBOARD_FARM_PURCHASERS =
+        "rest:get:/dashboard/purchasers/farm/{farmId}";
+    public static final String DASHBOARD_FARM_SELLERS =
+        "rest:get:/dashboard/sellers/farm/{farmId}";
+
+    public static final String DASHBOARD_ORG_STOCK_CLASSES =
+        "rest:get:/dashboard/stockclasses/org/{organisationId}";
+    public static final String ORG_STOCK_CLASSES =
+        "rest:get:/stockclasses/organisation/{organisationId}";
+    public static final String DASHBOARD_ORG_REVENUE_GROUPS =
+        "rest:get:/dashboard/revenuegroups/org/{organisationId}";
+    public static final String DASHBOARD_ORG_BREEDS =
+        "rest:get:/dashboard/breeds/org/{organisationId}";
+
+    public static final String DASHBOARD_COMPANY_REGIONS =
+        "rest:get:/dashboard/regions/company/{companyId}";
+
+    public static final String DASHBOARD_CATTLE_BREEDS =
+        "rest:get:/dashboard/cattle/breeds";
+    public static final String DASHBOARD_CATTLE_CARCASS_TYPES =
+        "rest:get:/dashboard/cattle/carcasstypes";
+
+    public static final String DASHBOARD_WIDGETS_FARM =
+        "rest:get:/dashboard/widgets/farm/{farmId}";
+    public static final String DASHBOARD_WIDGETS_COMPANY =
+        "rest:get:/dashboard/widgets/company/{companyId}";
+    public static final String DASHBOARD_WIDGETS_ORG =
+        "rest:get:/dashboard/widgets/org/{organisationId}";
+
+    public static final String NEW_WIDGET_FARM =
+        "rest:post:/dashboard/new/widget/farm/{farmId}";
+    public static final String NEW_WIDGET_ORG =
+        "rest:post:/dashboard/new/widget/org/{organisationId}";
+    public static final String NEW_WIDGET_COMPANY =
+        "rest:post:/dashboard/new/widget/company/{companyId}";
+
+    public static final String SAVE_TABS_MY_COMPANY =
+        "rest:post:/dashboard/save/tabs/mydashboard/company/{companyId}";
+    public static final String SAVE_TABS_MY_FARM =
+        "rest:post:/dashboard/save/tabs/mydashboard/farm/{farmId}";
+    public static final String SAVE_TABS_MY_ORG =
+        "rest:post:/dashboard/save/tabs/mydashboard/org/{organisationId}";
+
+    public static final String SAVE_TABS_COMPANY =
+        "rest:post:/dashboard/save/tabs/company/{companyId}";
+    public static final String SAVE_TABS_FARM =
+        "rest:post:/dashboard/save/tabs/farm/{farmId}";
+    public static final String SAVE_TABS_ORG =
+        "rest:post:/dashboard/save/tabs/org/{organisationId}";
+
+    public static final String CHANGE_WIDGET_ORDER_COMPANY =
+        "rest:post:/dashboard/widget/order/company/{companyId}";
+    public static final String CHANGE_WIDGET_ORDER_FARM =
+        "rest:post:/dashboard/widget/order/farm/{farmId}";
+    public static final String CHANGE_WIDGET_ORDER_ORG =
+        "rest:post:/dashboard/widget/order/org/{organisationId}";
+
+    public static final String DASHBOARD_DELETE_WIDGET_FARM =
+        "rest:get:/dashboard/widgets/farm/delete/{farmId}/{widgetId}";
+    public static final String DASHBOARD_DELETE_WIDGET_COMPANY =
+        "rest:get:/dashboard/widgets/company/delete/{companyId}/{widgetId}";
+    public static final String DASHBOARD_DELETE_WIDGET_ORG =
+        "rest:get:/dashboard/widgets/org/delete/{organisationId}/{widgetId}";
+
+    public static final String DASHBOARD_DAIRY_PREF_FARM =
+        "rest:get:/dashboard/farm/dairypref/{farmId}/{settings}";
+    public static final String DASHBOARD_DAIRY_PREF_COMPANY =
+        "rest:get:/dashboard/company/dairypref/{companyId}/{settings}";
+    public static final String DASHBOARD_DAIRY_PREF_ORG =
+        "rest:get:/dashboard/org/dairypref/{organisationId}/{settings}";
+
+    public static final String DASHBOARD_QUICKLINKS_FARM =
+        "rest:get:/dashboard/farm/quicklinks/{farmId}";
+    public static final String DASHBOARD_QUICKLINKS_COMPANY =
+        "rest:get:/dashboard/company/quicklinks/{companyId}";
+    public static final String DASHBOARD_QUICKLINKS_ORG =
+        "rest:get:/dashboard/org/quicklinks/{organisationId}";
+
+    public static final String DASHBOARD_CUSTOM_REPORTS_FARM =
+        "rest:get:/dashboard/farm/customreports/{farmId}";
+    public static final String DASHBOARD_RESET_FARM =
+        "rest:get:/dashboard/farm/reset/{farmId}";
+    public static final String DASHBOARD_SAVE_QUICKLINKS_FARM =
+        "rest:post:/dashboard/farm/quicklinks/save/{farmId}";
+    public static final String DASHBOARD_SAVE_QUICKLINKS_COMPANY =
+        "rest:post:/dashboard/company/quicklinks/save/{companyId}";
+    public static final String DASHBOARD_SAVE_QUICKLINKS_ORG =
+        "rest:post:/dashboard/org/quicklinks/save/{organisationId}";
+
+    public static final String DASHBOARD_QUICKLINKS_POSSIBLE_FARM =
+        "rest:get:/dashboard/farm/quicklinkmenus/possible";
+    public static final String DASHBOARD_QUICKLINKS_POSSIBLE_COMPANY =
+        "rest:get:/dashboard/company/quicklinkmenus/possible";
+    public static final String DASHBOARD_QUICKLINKS_POSSIBLE_ORG =
+        "rest:get:/dashboard/org/quicklinkmenus/possible";
+    public static final String DASHBOARD_QUICKLINKS_REPORTS_POSSIBLE =
+        "rest:get:/dashboard/quicklinkreports/possible";
+
+    public static final String GET_HELP_TOKEN = "rest:get:/clickhelp/token";
+
+    public static final String DASHBOARD_JOB_EXECUTIONS_FARM =
+        "rest:get:/dashboard/farm/jobexecutions/{farmId}";
+
+    public static final String SET_DEFAULT_DASHBOARD =
+        "rest:get:/dashboard/farm/defaultview/{farmId}/{view}";
+
+    public static final String SET_DEFAULT_DASHBOARD_COMPANY =
+        "rest:get:/dashboard/company/defaultview/{companyId}/{view}";
+
+    public static final String SET_DEFAULT_DASHBOARD_ORG =
+        "rest:get:/dashboard/org/defaultview/{organisationId}/{view}";
+
+    public static final String HERD_TEST_NUMBERS_GET =
+        "rest:post:/dashboard/herdtestnumbers/{farmId}/getData";
+
+    public static final String EXTERNAL_GET_GROUPS =
+        "rest:get:/external/animal/groups/{farmId}";
+
+    public static final String EXTERNAL_CONVERT_TO_FARM_ID =
+        "rest:get:/external/convert/identifier/{identifierType}/{farmIdentifier}";
+    public static final String EXTERNAL_CONVERT_WITH_PROPERTY_TO_FARM_ID =
+        "rest:get:/external/convert/identifier/{identifierType}/{farmIdentifier}/{propertyIdentifier}";
+    public static final String EXTERNAL_GET_GROUPS_NAME =
+        "rest:get:/external/animal/groups/{farmId}/{name}";
+    public static final String EXTERNAL_GET_ANIMAL_PRODUCTS =
+        "rest:get:/external/animal/products/{farmId}";
+    public static final String EXTERNAL_POST_ANIMAL_EVENT =
+        "rest:post:/external/animal/event/{identifierType}/{farmIdentifier}";
+    public static final String EXTERNAL_POST_ANIMAL_EVENT_WITH_FARM =
+        "rest:post:/external/animal/event/{farmId}";
+    public static final String EXTERNAL_POST_KILLSHEET =
+        "rest:post:/external/animal/killsheet/{identifierType}/{farmIdentifier}";
+    public static final String EXTERNAL_POST_KILLSHEET_WITH_FARM =
+        "rest:post:/external/animal/killsheet/{farmId}";
+    public static final String EXTERNAL_STOCK_COUNTS_FARM =
+        "rest:get:/external/animal/stockcounts/{farmId}/{animalTypes}/{date}/{showMobs}";
+    public static final String EXTERNAL_SYSTEM_NOTIFICATION =
+        "rest:post:/external/systemmessage/send";
+    public static final String EXTERNAL_ANIMAL_ID_BY_FARM_TAG =
+        "rest:get:/external/animal/farm/{farmId}/tag/{tag}";
+    public static final String FIGURED_FARMS_ORG =
+        "rest:get:/finance/figured/farms/{organisationId}";
+    public static final String FIGURED_USER_ORG =
+        "rest:get:/finance/figured/user/{organisationId}";
+    public static final String FIGURED_TRACKERS =
+        "rest:get:/finance/figured/trackers/{farmId}";
+    public static final String FIGURED_TRACKERS_FOR_CODE =
+        "rest:get:/finance/figured/trackers/{organisationId}/{farmCode}";
+    public static final String SEND_FIGURED_CONFIG =
+        "rest:get:/finance/figured/sendconfig/{organisationId}";
+    public static final String FIGURED_RUN_AGING =
+        "rest:get:/finance/figured/runaging/{farmId}";
+    public static final String DELETE_FIGURED_TRANSACTION =
+        "rest:get:/finance/figured/delete/{financialTransactionId}/{farmId}";
+    public static final String SECURITY_USER_FARM_PRIVILEGES =
+        "rest:get:/security/user/{userId}/farm/{farmId}/privileges";
+
+    public List<String> getString() {
+        return Arrays.stream(TransactionType.values()).map(Enum::name).collect(Collectors.toList());
+    }
+
+}
