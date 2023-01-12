@@ -5,16 +5,17 @@ pattern = re.compile('"(.*?)"')
 
 
 def process_dict_entry(first_domain_keyword_dict, route):
-    route_list = route.replace('"', '')
+    route_item = route.replace('"', '')
+    route_list = route_item
     route_list = route_list.split('/')
     domain_key = route_list[0]
-    if route_list[0] not in first_domain_keyword_dict.keys():
+    if domain_key not in first_domain_keyword_dict.keys():
         first_domain_keyword_dict[domain_key] = {}
         first_domain_keyword_dict[domain_key]['Total Routes'] = 0
         first_domain_keyword_dict[domain_key]['Routes'] = []
 
     else:
-        first_domain_keyword_dict[domain_key]['Routes'].append(route)
+        first_domain_keyword_dict[domain_key]['Routes'].append(route_item)
         first_domain_keyword_dict[domain_key]['Total Routes'] += 1
 
 
