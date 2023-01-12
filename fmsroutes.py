@@ -2,13 +2,13 @@ import re
 
 pattern = re.compile('"(.*?)"')
 
-post_list = []
-get_list = []
-put_list = []
-delete_list = []
-
 
 def analyse_routes(file):
+    post_list = []
+    get_list = []
+    put_list = []
+    delete_list = []
+
     for i, line in enumerate(open(file)):
         for match in re.finditer(pattern, line):
             if "post" in match.group().lower():
