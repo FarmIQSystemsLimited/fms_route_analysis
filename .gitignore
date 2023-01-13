@@ -1,5 +1,5 @@
 venv
 .idea
 
-complete_api_route_dict.txt
+complete_api_route_dict.json
 individual_dicts

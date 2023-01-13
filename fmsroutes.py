@@ -71,8 +71,8 @@ def analyse_routes(file):
     print('Number of Top Level APIs: ' + str(len(first_domain_keyword_dict)))
     print('Number of Routes: ' + str(len(post_list) + len(get_list) + len(put_list) + len(delete_list)))
 
-    with open('complete_api_route_dict.txt', 'w') as file:
-        file.write(json.dumps(first_domain_keyword_dict))
+    with open('complete_api_route_dict.json', 'w') as file:
+        file.write(json.dumps(first_domain_keyword_dict, indent=4, sort_keys=True))
 
     try:
         subdirectory = 'individual_dicts'
@@ -81,9 +81,9 @@ def analyse_routes(file):
         pass
 
     for item in first_domain_keyword_dict.items():
-        file_name = item[0] + '.txt'
+        file_name = item[0] + '.json'
         with open(os.path.join(subdirectory, file_name), 'w') as output_file:
-            output_file.write(json.dumps(item))
+            output_file.write(json.dumps(item, indent=4, sort_keys=True))
 
 
 analyse_routes(file='fiqroutes')
