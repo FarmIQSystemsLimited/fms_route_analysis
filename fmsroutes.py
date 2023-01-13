@@ -18,6 +18,8 @@ def process_dict_entry(first_domain_keyword_dict, route, http_keyword):
     route_list = route_item
     route_list = route_list.split('/')
     domain_key = route_list[0]
+    if route_list[0] == 'get' or route_list[0] == 'post':
+        domain_key = route_list[1]
     if domain_key not in first_domain_keyword_dict.keys():
         first_domain_keyword_dict[domain_key] = {}
         first_domain_keyword_dict[domain_key]['Total Routes'] = 0
@@ -37,11 +39,6 @@ def clean_route(http_keyword, line):
 
 
 def analyse_routes(file):
-    post_list = []
-    get_list = []
-    put_list = []
-    delete_list = []
-
     first_domain_keyword_dict = {}
 
     for i, line in enumerate(open(file)):
@@ -50,30 +47,28 @@ def analyse_routes(file):
             if constants.POST in route.lower():
                 route = clean_route(http_keyword='post', line=route)
                 process_dict_entry(first_domain_keyword_dict, route, constants.POST)
-                post_list.append(route)
+
             if constants.GET in route.lower():
                 route = clean_route(http_keyword='get', line=route)
                 process_dict_entry(first_domain_keyword_dict, route, constants.GET)
-                get_list.append(route)
+
             if constants.PUT in route.lower():
                 route = clean_route(http_keyword='put', line=route)
                 process_dict_entry(first_domain_keyword_dict, route, constants.PUT)
-                put_list.append(route)
+
             if constants.DELETE in route.lower():
                 route = clean_route(http_keyword='delete', line=route)
                 process_dict_entry(first_domain_keyword_dict, route, constants.DELETE)
-                delete_list.append(route)
 
     pprint.pprint(first_domain_keyword_dict)
 
-    print('Number of Top Level APIs: ' + str(len(first_domain_keyword_dict)))
-    print('Number of Routes: ' + str(len(post_list) + len(get_list) + len(put_list) + len(delete_list)))
+    print('\n Number of Top Level Keywords: ' + str(len(first_domain_keyword_dict)))
 
     with open('complete_api_route_dict.json', 'w') as file:
         file.write(json.dumps(first_domain_keyword_dict, indent=4, sort_keys=True))
 
+    subdirectory = 'individual_dicts'
     try:
-        subdirectory = 'individual_dicts'
         os.mkdir(subdirectory)
     except FileExistsError:
         pass
@@ -82,6 +77,11 @@ def analyse_routes(file):
         file_name = item[0] + '.json'
         with open(os.path.join(subdirectory, file_name), 'w') as output_file:
             output_file.write(json.dumps(item, indent=4, sort_keys=True))
+
+    route_counts = {}
+    for item in first_domain_keyword_dict.items():
+        route_counts[item[0]] = item[1]['Total Routes']
+    pprint.pprint(sorted(route_counts.items(), key=lambda x: x[1]))
 
 
 analyse_routes(file='fiqroutes')
