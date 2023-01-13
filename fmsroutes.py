@@ -26,9 +26,8 @@ def process_dict_entry(first_domain_keyword_dict, route, http_keyword):
         first_domain_keyword_dict[domain_key]['PUT Routes'] = []
         first_domain_keyword_dict[domain_key]['DELETE Routes'] = []
 
-    else:
-        first_domain_keyword_dict[domain_key][http_keyword.upper() + ' Routes'].append(route_item)
-        first_domain_keyword_dict[domain_key]['Total Routes'] += 1
+    first_domain_keyword_dict[domain_key][http_keyword.upper() + ' Routes'].append(route_item)
+    first_domain_keyword_dict[domain_key]['Total Routes'] += 1
 
 
 def clean_route(http_keyword, line):
@@ -64,17 +63,6 @@ def analyse_routes(file):
                 route = clean_route(http_keyword='delete', line=route)
                 process_dict_entry(first_domain_keyword_dict, route, constants.DELETE)
                 delete_list.append(route)
-
-    print('File: ' + file)
-    print(str(len(post_list)) + ' post operations detected')
-    print('e.g. ' + post_list[0])
-    print(str(len(get_list)) + ' get operations detected')
-    print('e.g. ' + get_list[0])
-    print(str(len(put_list)) + ' put operations detected')
-    print('e.g. ' + put_list[0])
-    print(str(len(delete_list)) + ' delete operations detected')
-    print('e.g. ' + delete_list[0])
-    print('\n')
 
     pprint.pprint(first_domain_keyword_dict)
 
