@@ -3,3 +3,4 @@ venv
 
 complete_api_route_dict.json
 individual_dicts
+route_stats.csv

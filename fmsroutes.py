@@ -3,6 +3,7 @@ import pprint
 import json
 import os.path
 import types
+import csv
 
 constants = types.SimpleNamespace()
 constants.PUT = "put"
@@ -82,6 +83,11 @@ def analyse_routes(file):
     for item in first_domain_keyword_dict.items():
         route_counts[item[0]] = item[1]['Total Routes']
     pprint.pprint(sorted(route_counts.items(), key=lambda x: x[1]))
+
+    with open('route_stats.csv', 'w', newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=route_counts.keys())
+        writer.writeheader()
+        writer.writerow(route_counts)
 
 
 analyse_routes(file='fiqroutes')
