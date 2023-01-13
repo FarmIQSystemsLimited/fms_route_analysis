@@ -2,11 +2,18 @@ import re
 import pprint
 import json
 import os.path
+import types
+
+constants = types.SimpleNamespace()
+constants.PUT = "put"
+constants.GET = "get"
+constants.POST = "post"
+constants.DELETE = "delete"
 
 pattern = re.compile('"(.*?)"')
 
 
-def process_dict_entry(first_domain_keyword_dict, route):
+def process_dict_entry(first_domain_keyword_dict, route, http_keyword):
     route_item = route.replace('"', '')
     route_list = route_item
     route_list = route_list.split('/')
@@ -14,10 +21,13 @@ def process_dict_entry(first_domain_keyword_dict, route):
     if domain_key not in first_domain_keyword_dict.keys():
         first_domain_keyword_dict[domain_key] = {}
         first_domain_keyword_dict[domain_key]['Total Routes'] = 0
-        first_domain_keyword_dict[domain_key]['Routes'] = []
+        first_domain_keyword_dict[domain_key]['GET Routes'] = []
+        first_domain_keyword_dict[domain_key]['POST Routes'] = []
+        first_domain_keyword_dict[domain_key]['PUT Routes'] = []
+        first_domain_keyword_dict[domain_key]['DELETE Routes'] = []
 
     else:
-        first_domain_keyword_dict[domain_key]['Routes'].append(route_item)
+        first_domain_keyword_dict[domain_key][http_keyword.upper() + ' Routes'].append(route_item)
         first_domain_keyword_dict[domain_key]['Total Routes'] += 1
 
 
@@ -38,21 +48,21 @@ def analyse_routes(file):
     for i, line in enumerate(open(file)):
         for match in re.finditer(pattern, line):
             route = match.group()
-            if "post" in route.lower():
+            if constants.POST in route.lower():
                 route = clean_route(http_keyword='post', line=route)
-                process_dict_entry(first_domain_keyword_dict, route)
+                process_dict_entry(first_domain_keyword_dict, route, constants.POST)
                 post_list.append(route)
-            if "get" in route.lower():
+            if constants.GET in route.lower():
                 route = clean_route(http_keyword='get', line=route)
-                process_dict_entry(first_domain_keyword_dict, route)
+                process_dict_entry(first_domain_keyword_dict, route, constants.GET)
                 get_list.append(route)
-            if "put" in route.lower():
+            if constants.PUT in route.lower():
                 route = clean_route(http_keyword='put', line=route)
-                process_dict_entry(first_domain_keyword_dict, route)
+                process_dict_entry(first_domain_keyword_dict, route, constants.PUT)
                 put_list.append(route)
-            if "delete" in route.lower():
+            if constants.DELETE in route.lower():
                 route = clean_route(http_keyword='delete', line=route)
-                process_dict_entry(first_domain_keyword_dict, route)
+                process_dict_entry(first_domain_keyword_dict, route, constants.DELETE)
                 delete_list.append(route)
 
     print('File: ' + file)
